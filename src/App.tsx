@@ -4,13 +4,15 @@ import Home from './routes/home'
 import Profile from './routes/profile'
 import Login from './routes/login';
 import SignUp from './routes/SignUp';
-import { createGlobalStyle } from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 import reset from 'styled-reset';
 import Info from './routes/info';
 import Gallery from './routes/gallery';
 import Board from './routes/board';
 import Reservation from './routes/reservation';
 import Team from './routes/team';
+import { useEffect, useState } from 'react';
+import LoadingScreen from './components/loading-screen';
 
 const router = createBrowserRouter([
   {
@@ -58,18 +60,34 @@ const router = createBrowserRouter([
 ]);
 
 const GlobalStyles = createGlobalStyle`
-  ${reset}
+  ${reset};
   body{
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
 `;
 
+const Wrapper = styled.div`
+  height: 100vh;
+  display:flex;
+  justify-content:center;
+`
+
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const init = async() => {
+    //사용자 로그인 정보 가져오기  
+    //await
+    setIsLoading(false);
+  }
+  useEffect(() => {
+    init();
+  }, []);
+
   return (
-    <>
+    <Wrapper>
       <GlobalStyles />
-      <RouterProvider router={router} />
-    </>
+      {isLoading ? <LoadingScreen /> : <RouterProvider router={router} />}
+    </Wrapper>
   )
 }
 
