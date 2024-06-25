@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components"
 
 const Wrapper = styled.div`
@@ -89,11 +89,14 @@ const Option = styled.option`
     background-color:#F2F4F8;
 `;
 
-
 const SignInError = styled.span`
     font-weight: 600;
     color: tomato;
 `;
+
+const Switcher = styled.span`
+    margin-top: 20px;
+`
 
 export default function SignUp(){
     const navigate = useNavigate();
@@ -283,7 +286,10 @@ export default function SignUp(){
                 </Form>
                 {signInError !== ""? <SignInError>{signInError}</SignInError> : null}
                 </FormContainer>
-            </LoginFormContainer>
+                <Switcher >
+                    이미 계정이 있는 경우 <Link to="/login">로그인</Link>
+                </Switcher>
+                </LoginFormContainer>
         </Wrapper>
     )
 }

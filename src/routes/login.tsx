@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Cookies } from "react-cookie"
 import styled from "styled-components"
 
@@ -76,6 +76,10 @@ const SignInError = styled.span`
     font-weight: 600;
     color: tomato;
 `;
+
+const Switcher = styled.span`
+    margin-top: 20px;
+`
 
 
 
@@ -188,6 +192,9 @@ export default function Login(){
                 </Form>
                 {signInError !== ""? <SignInError>{signInError}</SignInError> : null}
                 </FormContainer>
+                <Switcher >
+                    이미 계정이 있는 경우 <Link to="/signUp">로그인</Link>
+                </Switcher>
             </LoginFormContainer>
         </Wrapper>
     )
