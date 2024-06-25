@@ -13,6 +13,7 @@ import Reservation from './routes/reservation';
 import Team from './routes/team';
 import { useEffect, useState } from 'react';
 import LoadingScreen from './components/loading-screen';
+import ProtectedRoute from './components/protected-route';
 
 const router = createBrowserRouter([
   {
@@ -37,15 +38,27 @@ const router = createBrowserRouter([
        },
        {
         path: "reservation",
-        element: <Reservation />
+        element: (
+          <ProtectedRoute>
+            <Reservation />
+          </ProtectedRoute>
+          ),
        },
        {
         path: "team",
-        element: <Team />
+        element: (
+          <ProtectedRoute>
+            <Team />
+          </ProtectedRoute>
+          ),
        },
        {
         path: "profile",
-        element: <Profile />
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
        }
     ]
   },

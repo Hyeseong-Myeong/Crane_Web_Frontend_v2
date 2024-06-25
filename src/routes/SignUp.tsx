@@ -90,7 +90,7 @@ const Option = styled.option`
 `;
 
 
-const Error = styled.span`
+const SignInError = styled.span`
     font-weight: 600;
     color: tomato;
 `;
@@ -98,7 +98,7 @@ const Error = styled.span`
 export default function SignUp(){
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [signInError, setSignInError] = useState("");
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -130,7 +130,8 @@ export default function SignUp(){
         }
     }
     
-    const onSelectChange = (e) => {
+    const onSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        e.preventDefault();
         setSession(e.target.value)
     }
 
@@ -158,52 +159,42 @@ export default function SignUp(){
             userBirth: birthday,
             userSession :session
         }
-        try{
-            //계정 생성
-            const response = await fetch("http://localhost:8080/api/users/signup",
-                {
-                    method: "POST",
-                    headers:{
-                        "Content-Type":"application/json",
-                    },
-                    body: JSON.stringify(payload),
-                }
-            );
-
-            const data = await response.json();
-            console.log(data)
-            if(response.status === 201){
-                const loginResponse = await fetch("http://localhost:8080/api/auth/login",
-                    {
-                        method: "POST",
-                        headers:{
-                            "Content-Type":"application/json",
-                        },
-                        body: JSON.stringify(payload),
-                    }
-                );
-                const loginData = await loginResponse.json();
-                console.log(loginData);
-
-                if(loginResponse.status === 200){
-                    const cookies = document.cookie;
-                    console.log("로그인 성공");
-                    console.log(cookies);
-                }
-                
-
-            }else if(response.status === 400){
-                alert(`회원가입 실패`);
+        
+        setIsLoading(true);
+        //계정 생성
+        await fetch("http://localhost:8080/api/users/signup",
+            {
+                method: "POST",
+                headers:{
+                    "Content-Type":"application/json",
+                },
+                body: JSON.stringify(payload),
             }
-            //auto login
+        ).then(res => {
+            if(!res.ok){
+                console.log(res);
+            }
+            return res.json();
+        })
+        .then(data => {
+            if(data.code === 200){
+                navigate("/");
+            }
+            else if(data.code === 409){
+                setIsLoading(false);
+                setSignInError("이미 사용중인 이메일입니다.");
+                throw new Error("이메일 중복");
+            }
+            else{
+                setIsLoading(true);
+                setSignInError("회원가입에 실패했습니다. 새로고침 후 다시 시도해주세요.")
+                throw new Error("회원가입에 실패했습니다.")
+            }
+        })
+        .catch(e => {
+            console.log(e);
+        })
             
-            //redirect to home
-            navigate("/");
-        }catch(e){
-
-        }finally{
-
-        }
     }
 
     return(
@@ -290,7 +281,7 @@ export default function SignUp(){
                         value={isLoading ? "Loading..." : "계정 만들기"}
                     />
                 </Form>
-                {error !== ""? <Error>{error}</Error> : null}
+                {signInError !== ""? <SignInError>{signInError}</SignInError> : null}
                 </FormContainer>
             </LoginFormContainer>
         </Wrapper>
