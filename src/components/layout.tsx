@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import styled from "styled-components";
+import { Button, DropDownContents, DropMenuItem, Logo, MenuBar, MenuDropdown, MenuGroup, MenuItem, NumNotis, Profile, ProfileBlock, ProfileBlockName, ProfileContainer, ProfileDropdown, ProfileMainBox, ProfileMenu, SearchBar, SearchButton, SearchInput, Text } from "./menu-bar-components";
 
 const Wrapper = styled.div`
     display: grid;
@@ -8,256 +9,10 @@ const Wrapper = styled.div`
 `;
 
 
-const MenuBar = styled.div`
-    display: flex;
-
-    background-color: #333;
-    overflow: hidden;
-    justify-content: space-between;
-    
-
-    font-family: "Noto Sans KR";
-    font-weight: 300;
-`;
-
-// const MenuList = styled.div`
-//     display: flex;
-
-// `;
-
-const MenuGroupLeft = styled.div`
-    display: flex;
-
-`;
-
-const MenuGroupRight = styled.div`
-    display: flex;
-    flex-direction: row;
-
-    align-items:center;
-
-    margin-right: 36px;
-`;
-
-const Logo = styled.img`
-    width: 143px;
-    height: 41px;
-    padding: 13px;
-    padding-left: 80px;
-    
-`;
-
-const MenuItem = styled.a`
-    color: white;
-    font-size: 16px;
-    text-align: center;
-    text-decoration: none;
-
-    padding: 24px;
-    float: left;
-
-    
-    &:hover{
-        background-color:grey;
-    }
-`;
-
-const MenuDropdown = styled.div`
-    float: left;
-    overflow: hidden;
-
-    
-    border: none;
-    outline: none;
-    color: white;
-    padding: 4px 16px;
-    background-color: inherit;
-    font-family: inherit;
-    margin: 0;
-
-`;
-
-const Button = styled.button`
-    font-size: 16px;  
-    border: none;
-    outline: none;
-    color: white;
-    padding: 16px 16px;
-
-    background-color: inherit;
-    font-family: inherit;
-    margin: 0;
-
-    &:hover{
-        background-color:grey;
-    }
-`;
-
-
-const DropDownContents = styled.div`
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-
-    font-weight:300;
-
-    ${MenuDropdown}:hover &{
-        display:block;
-    }
-`;
-
-const DropMenuItem = styled.a`
-    float: none;
-    color: black;
-    padding: 18px 16px;
-    text-decoration: none;
-    display: block;
-    text-align: left;
-
-    &:hover{
-        background-color:grey;
-    }
-`;
-
-const SearchBar = styled.div`
-    height: 48px;
-    width: 256px;
-
-    display: flex;
-    align-items: center;
-    
-    background-color: white;
-`;
-
-const SearchInput = styled.input`
-    padding: 0.5rem;
-    font-size: 1rem;
-    border: none;
-
-    flex-grow: 1;
-
-    &:plcaeholder{
-        color:gray;
-    }
-`;
-
-const SearchButton = styled.img`
-    background: none;
-    border: none;
-`;
-
-
-const ProfileContainer = styled.div`
-    float:right;
-    overflow: hidden;
- 
-    padding: 14px 16px;
-    background-color: inherit;
-    font-family: inherit;
-    margin: 0;
-`;
-
-const Profile = styled.img`
-    width: 48px;
-    height: 48px;
-
-    border-radius: 50%;
-    align-items: center;
-    justify-items: center;
-
-`;
-
-const ProfileMenu = styled.div`
-    width:360px;
-    
-    background-color:#333;
-
-
-    display:none;
-    min-width: 360px;
-    min-height: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-    position:absolute;
-    right:24px;
-
-    border-radius:10px;
-
-    ${ProfileContainer}:hover &{
-        display:block;
-    }
-`;
-
-const ProfileDropdown = styled.div`
-    display:flex;
-    flex-direction:column;
-    color:white;
-
-    font-family: "Noto Sans KR";
-    font-weight: 300;
-`;
-
-const ProfileMainBox = styled.a`
-    display:flex;
-    flex-direction:column;
-
-    align-items:center;
-
-    margin:10px;
-    padding: 10px;
-    border-radius:10px;
-
-    color:inherit;
-    text-decoration:none;
-
-    &:hover{
-        background-color:rgb(255,255,255,0.2);
-    }
-`;
-
-const ProfileBlock = styled.a`
-    display:flex;
-    justify-content: space-between;
-
-    margin:10px;
-    padding: 10px;
-    border-radius:10px;
-
-    color:inherit;
-    text-decoration:none;
-
-    align-content: center;
-
-    &:hover{
-        background-color:rgb(255,255,255,0.2);
-    }
+const MainContents = styled.div`
+    margin-left: 15vw;
+    margin-right: 15vh;
 `
-
-const ProfileBlockName = styled.div`
-    display:flex; 
-    height:30px;
-
-    white-space:nowrap;
-    
-`;
-
-const Text = styled.span`
-    padding:10px;
-`;
-
-const NumNotis = styled.div`
-    background-color: tomato;
-    border-radius: 50%;
-
-    width: 24%;
-
-    padding: 10px;
-
-`;
-
 
 
 export default function Layout(){
@@ -273,7 +28,7 @@ export default function Layout(){
         <Wrapper>
             <MenuBar>
                 {/* <MenuList> */}
-                    <MenuGroupLeft>
+                    <MenuGroup>
                         {/* 로고 */}
                         <Link to="/"><Logo src="/logo(white).png"/></Link>
                         {/* Info */}
@@ -313,9 +68,9 @@ export default function Layout(){
                                 </DropMenuItem>
                             </DropDownContents>                        
                         </MenuDropdown>
-                    </MenuGroupLeft>
+                    </MenuGroup>
 
-                    <MenuGroupRight>
+                    <MenuGroup>
                         {/* search */}        
                         <SearchBar>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="-6 -6 36 36" fill="currentColor" className="size-6" color="grey">
@@ -368,10 +123,12 @@ export default function Layout(){
                                 </ProfileDropdown>
                             </ProfileMenu>
                         </ProfileContainer>                        
-                    </MenuGroupRight>
+                    </MenuGroup>
                 {/* </MenuList> */}
             </MenuBar>
-            <Outlet />
+            <MainContents>
+                <Outlet />
+            </MainContents>
         </Wrapper>
     )
 }
