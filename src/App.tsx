@@ -80,8 +80,10 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 const Wrapper = styled.div`
+  /* display:flex; */
   height: 100vh;
-  display:flex;
+  width: 100vw;
+  
   justify-content:center;
 `
 
