@@ -23,6 +23,9 @@ export default function Layout(){
     const [NumNoti, setNumNoti] = useState(0);
     //로그인 상태 확인
     //로그인 정보 받아오기
+    
+
+
 
     return(
         <Wrapper>

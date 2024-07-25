@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Form, FormContainer, Image, ImageContainer, Input, InputTitle, LoginFormContainer, SignInError, Switcher, Title, Wrapper } from "../components/auth-components";
-
+import { Form, FormContainer, Image, ImageContainer, Input, InputTitle, LoginFormContainer, SignInError, Switcher, Title, Wrapper } from "../components/auth-page-components";
+import axios from "axios";
 
 
 export default function Login(){
@@ -41,39 +41,29 @@ export default function Login(){
 
 
         //로그인
-        await fetch("http://localhost:8080/api/auth/login",
-            {
-                method: "POST",
-                headers:{
-                    "Content-Type":"application/json",
-                },
-                body: JSON.stringify(payload),
-            }
-        ).then(res => {
-            if(!res.ok){
-                console.log(res);
-            }
-            return res.json();
-        })
-        .then(data => {
-            if(data.code === 200){
-                navigate("/");
-            }
-            else if(data.code === 400){
-                setIsLoading(false);
-                setSignInError("아이디 또는 비밀번호가 잘못되었습니다.");
-                throw new Error("입력 오류");
-            }
-            else{
-                setIsLoading(true);
-                setSignInError("로그인 오류. 새로고침 후 다시 시도해주세요.")
-                throw new Error("로그인 실패")
-            }
-        })
-        .catch(e => {
-            console.log(e);
-        })
-            
+        try{ 
+            axios.post(
+                `${import.meta.env.VITE_API_URL}/auth/login`,
+                payload,
+                {
+                    withCredentials: true,
+                }
+            ).then(res =>{
+                if(res.status === 200){
+                    navigate("/")
+                } else if(res.data.code === 400){
+                    setIsLoading(false);
+                    setSignInError("아이디 또는 비밀번호가 잘못되었습니다.");
+                    throw new Error("입력 오류");
+                }else{
+                    setIsLoading(true);
+                    setSignInError("로그인 오류. 새로고침 후 다시 시도해 주세요.");
+                    throw new Error("로그인 오류")
+                }
+            })
+        } catch(error){
+            console.log(error);
+        }            
     }
 
     return(

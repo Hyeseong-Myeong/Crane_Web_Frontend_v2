@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Form, FormContainer, Image, ImageContainer, Input, InputTitle, LoginFormContainer, Option, Select, SignInError, Switcher, Title, Wrapper } from "../components/auth-components";
+import { Form, FormContainer, Image, ImageContainer, Input, InputTitle, LoginFormContainer, Option, Select, SignInError, Switcher, Title, Wrapper } from "../components/auth-page-components";
 
 
 

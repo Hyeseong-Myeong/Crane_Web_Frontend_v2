@@ -14,6 +14,7 @@ import Team from './routes/team';
 import { useEffect, useState } from 'react';
 import LoadingScreen from './components/loading-screen';
 import ProtectedRoute from './components/protected-route';
+import getUserInfo from './components/auth-components';
 
 const router = createBrowserRouter([
   {
@@ -91,7 +92,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const init = async() => {
     //사용자 로그인 정보 가져오기  
-    //await
+    await getUserInfo();
     setIsLoading(false);
   }
   useEffect(() => {
