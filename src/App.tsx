@@ -91,8 +91,8 @@ const Wrapper = styled.div`
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const init = async() => {
-    //사용자 로그인 정보 가져오기  
-    await getUserInfo();
+    //사용자 로그인 정보 가져오기
+    // await getUserInfo();
     setIsLoading(false);
   }
   useEffect(() => {

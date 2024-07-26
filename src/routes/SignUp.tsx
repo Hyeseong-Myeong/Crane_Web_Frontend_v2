@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, FormContainer, Image, ImageContainer, Input, InputTitle, LoginFormContainer, Option, Select, SignInError, Switcher, Title, Wrapper } from "../components/auth-page-components";
+import axios from "axios";
 
 
 
@@ -55,6 +56,7 @@ export default function SignUp(){
             phoneNumber === "" || 
             birthday === "" ||  
             session === ""){
+                console.log(name, email, password, studentId, dept, phoneNumber, birthday, session)
             return;
         }
         //create payload
@@ -70,39 +72,62 @@ export default function SignUp(){
         }
         
         setIsLoading(true);
+        console.log("실행");
         //계정 생성
-        await fetch("http://localhost:8080/api/users/signup",
-            {
-                method: "POST",
-                headers:{
-                    "Content-Type":"application/json",
-                },
-                body: JSON.stringify(payload),
-            }
-        ).then(res => {
-            if(!res.ok){
-                console.log(res);
-            }
-            return res.json();
-        })
-        .then(data => {
-            if(data.code === 200){
-                navigate("/");
-            }
-            else if(data.code === 409){
-                setIsLoading(false);
-                setSignInError("이미 사용중인 이메일입니다.");
-                throw new Error("이메일 중복");
-            }
-            else{
-                setIsLoading(true);
-                setSignInError("회원가입에 실패했습니다. 새로고침 후 다시 시도해주세요.")
-                throw new Error("회원가입에 실패했습니다.")
-            }
-        })
-        .catch(e => {
-            console.log(e);
-        })
+        try{
+            axios.post(
+                `${import.meta.env.VITE_API_URL}/users/signup`,
+                payload,
+            )
+            .then(res => {
+                if(res.status === 200){
+                    navigate("/")
+                }else if(res.status === 409){
+                    setIsLoading(false);
+                    setSignInError("이미 사용중인 이메일입니다.");
+                    throw new Error("이메일 중복");
+                }else {
+                    setIsLoading(true);
+                    setSignInError("회원가입에 실패했습니다. 새로고침 후 다시 시도해주세요.")
+                    throw new Error("회원가입에 실패했습니다.")
+                }
+            })
+        }catch(err){
+            console.log(err);
+        }
+
+        // await fetch("http://localhost:8080/api/users/signup",
+        //     {
+        //         method: "POST",
+        //         headers:{
+        //             "Content-Type":"application/json",
+        //         },
+        //         body: JSON.stringify(payload),
+        //     }
+        // ).then(res => {
+        //     if(!res.ok){
+        //         console.log(res);
+        //     }
+        //     return res.json();
+        // })
+        // .then(data => {
+        //     if(data.code === 200){
+        //         navigate("/");
+        //     }
+        //     else if(data.code === 409){
+        //         setIsLoading(false);
+        //         setSignInError("이미 사용중인 이메일입니다.");
+        //         throw new Error("이메일 중복");
+        //     }
+        //     else{
+        //         setIsLoading(true);
+        //         setSignInError("회원가입에 실패했습니다. 새로고침 후 다시 시도해주세요.")
+        //         throw new Error("회원가입에 실패했습니다.")
+        //     }
+        // })
+        // .catch(e => {
+        //     console.log(e);
+        // })
             
     }
 
@@ -171,6 +196,7 @@ export default function SignUp(){
                     />
                     <InputTitle>세션</InputTitle>
                     <Select onChange={onSelectChange} required>
+                        <Option value="">세션 선택</Option>
                         <Option value="VOCAL">보컬</Option>
                         <Option value="GUITAR">기타</Option>
                         <Option value="BASS">베이스</Option>

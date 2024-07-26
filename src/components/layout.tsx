@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import styled from "styled-components";
 import { Button, DropDownContents, DropMenuItem, Logo, MenuBar, MenuDropdown, MenuGroup, MenuItem, NumNotis, Profile, ProfileBlock, ProfileBlockName, ProfileContainer, ProfileDropdown, ProfileMainBox, ProfileMenu, SearchBar, SearchButton, SearchInput, Text } from "./menu-bar-components";
+import getUserInfo from "./auth-components";
 
 const Wrapper = styled.div`
     display: grid;
@@ -23,8 +24,16 @@ export default function Layout(){
     const [NumNoti, setNumNoti] = useState(0);
     //로그인 상태 확인
     //로그인 정보 받아오기
-    
+    const init = async() => {
+        //사용자 로그인 정보 가져오기
+        await getUserInfo();
 
+
+        // setIsLoading(false);
+      }
+    useEffect(() => {
+    init();
+    }, []);
 
 
     return(

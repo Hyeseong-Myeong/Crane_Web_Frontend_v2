@@ -5,10 +5,12 @@ export default async function getUserInfo(){
         `${import.meta.env.VITE_API_URL}/users/userinfo`,
         {withCredentials: true},
     ).then(res =>{
-        if(res.status === 401){
+        if(res.status === 200){
+            return;
+        }else{
             console.log(res);
+            return null;
         }
-        return res;
     }).catch(err =>{
         console.log("ERR: ", err);
     });

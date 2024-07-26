@@ -103,7 +103,7 @@ export default function Login(){
                 {signInError !== ""? <SignInError>{signInError}</SignInError> : null}
                 </FormContainer>
                 <Switcher>
-                    이미 계정이 있는 경우 <Link to="/signUp">로그인</Link>
+                    계정이 없으신가요? <Link to="/signUp">회원가입</Link>
                 </Switcher>
             </LoginFormContainer>
         </Wrapper>
