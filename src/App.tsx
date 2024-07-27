@@ -14,7 +14,6 @@ import Team from './routes/team';
 import { useEffect, useState } from 'react';
 import LoadingScreen from './components/loading-screen';
 import ProtectedRoute from './components/protected-route';
-import getUserInfo from './components/auth-components';
 
 const router = createBrowserRouter([
   {

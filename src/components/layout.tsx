@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Navigate, Outlet } from "react-router-dom";
 import styled from "styled-components";
 import { Button, DropDownContents, DropMenuItem, Logo, MenuBar, MenuDropdown, MenuGroup, MenuItem, NumNotis, Profile, ProfileBlock, ProfileBlockName, ProfileContainer, ProfileDropdown, ProfileMainBox, ProfileMenu, SearchBar, SearchButton, SearchInput, Text } from "./menu-bar-components";
-import getUserInfo from "./auth-components";
+import getUserInfo, { logout } from "./auth-components";
 
 const Wrapper = styled.div`
     display: grid;
@@ -18,25 +18,53 @@ const MainContents = styled.div`
 
 export default function Layout(){
     //사용자 정보 초기화
-    const [isLogedIn, setIsLogedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [username, setUsername] = useState("익명");
     const [userprofilePic, setUserProfilePic] = useState("/cool_profile_pic.webp")
     const [NumNoti, setNumNoti] = useState(0);
+    
+
     //로그인 상태 확인
     //로그인 정보 받아오기
-    const init = async() => {
-        //사용자 로그인 정보 가져오기
-        await getUserInfo();
-
-
-        // setIsLoading(false);
-      }
+    
     useEffect(() => {
+        const init = async() => {
+            //로그인 상태인 경우 사용자 로그인 정보 가져오기
+                try{
+                    const data = await getUserInfo();
+                    if(data){
+                        setIsLoggedIn(true);
+                        setUsername(data.userName);
+                        setUserProfilePic(data.profilePic || "/cool_profile_pic.webp");
+                        setNumNoti(data.numNoti || 0);
+                    }
+                }catch(err){
+                    console.error("Err : ", err);
+                }
+            
+          }
+
     init();
-    }, []);
+    }, [isLoggedIn]);
+
+    //로그아웃 함수
+    const handleLogout = async () => {
+        try{
+            const SuccessLogout =  await logout();
+            if(SuccessLogout){
+                setIsLoggedIn(false);
+                //강제 새로고침
+                window.location.reload();
+            }
+        }catch(err){
+            console.error("Logout Failed: ", err);
+        }
+    };
+
 
 
     return(
+        
         <Wrapper>
             <MenuBar>
                 {/* <MenuList> */}
@@ -123,7 +151,7 @@ export default function Layout(){
                                         <Text>프로필 설정</Text>
                                         </ProfileBlockName>
                                     </ProfileBlock>
-                                    <ProfileBlock /*로그아웃 관련 설정 필요*/>
+                                    <ProfileBlock onClick={handleLogout}/*로그아웃 구현*/>
                                         <ProfileBlockName>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
