@@ -14,6 +14,7 @@ import Team from './routes/team';
 import { useEffect, useState } from 'react';
 import LoadingScreen from './components/loading-screen';
 import ProtectedRoute from './components/protected-route';
+import GalleryDetail from './routes/galleryDetail';
 
 const router = createBrowserRouter([
   {
@@ -30,7 +31,11 @@ const router = createBrowserRouter([
        },
        {
         path: "gallery",
-        element: <Gallery />
+        element: <Gallery />,
+       },
+       {
+        path: "gallery/detail/:boardId",
+        element: <GalleryDetail />
        },
        {
         path: "board",

@@ -69,7 +69,7 @@ export default function Login(){
     return(
         <Wrapper>
             <ImageContainer >
-                <Image src="public/login-img.jpg" />
+                <Image src="login-img.jpg" />
             </ImageContainer>
             <LoginFormContainer>
                 <Title>Log In</Title>

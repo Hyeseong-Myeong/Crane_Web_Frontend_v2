@@ -58,10 +58,13 @@ export const Form = styled.form`
 
 export const Input = styled.input`
     padding: 10px 20px;
-    border: none;
     width: 70%;
     font-size: 16px;
-    background-color:#F2F4F8;
+    background-color: #F2F4F8;
+    
+    border-width:0 0 1px;
+    border-color: #C1C7CD;
+
     &[type="submit"] {
         cursor:pointer;
         margin-top: 10px;
