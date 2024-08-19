@@ -241,3 +241,15 @@ export const NumNotis = styled.div`
     padding: 10px;
 
 `;
+
+export const LoginLink = styled.a`
+    text-decoration: none;
+    color: white;
+
+    padding: 10px;
+
+`
+
+export const LoginLinkContainer = styled.div`
+    padding: 20px;
+`
