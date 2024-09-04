@@ -202,13 +202,13 @@ export default function Layout(){
                             </svg>  
                         </LinkLogo>
                         <Text>
-                            인스타 링크
+                            인스타 바로가기
                         </Text>
                     </LinkBox>
                     <LinkBox href="https://www.youtube.com/@crane_sch">
                         <LinkLogoImg src="YouTube_light_icon_(2017).svg.png" />
                         <Text>
-                            유튜브 링크
+                            유튜브 바로가기
                         </Text>
                     </LinkBox>
                     

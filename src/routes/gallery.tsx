@@ -3,7 +3,15 @@ import { HomeENGTitle, HomeKRTitle } from "../components/page-components";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import GalleryItem from "../components/gallery-item";
+import { useParams } from "react-router-dom";
 
+export interface User{
+    uid: number;
+    userName: string;
+    userPic: string;
+    userTh: number;
+    session: String;
+}
 
 export interface GalleryPost{
     bid: string;
@@ -11,10 +19,8 @@ export interface GalleryPost{
     boardContents: string;
     boardView: number;
     boardCategory:string;
-    userId: string;
-    userName: string;
+    userResponseDto: User;
     createdDate: number;
-    userPic: string;
     thumbNaile: string;
 }
 
@@ -32,22 +38,26 @@ export const GalleryContainer = styled.div`
     display: grid;
     grid-template-columns: repeat(4, 1fr);
 `
+const PageContainer = styled.div`
+
+`;
 
 
 export default function Gallery(){
-
+    const { pageNum } = useParams();
     const[galleryItems, setGalleryItems] = useState<GalleryPost[]>([]);
-
+    const[pageNumMax, setPageNumMax] = useState();
 
     useEffect(() => {
         const fetchGallery = async() => {
             axios.get(
                 `${import.meta.env.VITE_API_URL}/board/list`,
                 {params:{
-                    "BoardCategory": "GALLERY"
+                    "category": "GALLERY",
+                    "page" : pageNum
                 }}
             ).then(res => {
-                setGalleryItems(res.data);
+                setGalleryItems(res.data.contents);
             })
             
         }
@@ -63,6 +73,9 @@ export default function Gallery(){
                     <GalleryItem key={item.bid}{...item} />
                 ))}
             </GalleryContainer>  
+            <PageContainer>
+                
+            </PageContainer>
         </Wrapper>
     )
 }

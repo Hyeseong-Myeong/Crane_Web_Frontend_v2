@@ -105,7 +105,7 @@ export function TruncatedText(fullText: string, maxLen: number){
       return fullText;
 }
 
-export default function GalleryItem({bid, thumbNaile, boardTitle, userName, createdDate, boardContents, userId}:GalleryPost ){
+export default function GalleryItem({bid, thumbNaile, boardTitle, userResponseDto, createdDate, boardContents, }:GalleryPost ){
     const [userPic, setUserPic] = useState("cool_profile_pic.webp")
     const [formattedDate, setFormattedDate] = useState("");
 
@@ -116,7 +116,10 @@ export default function GalleryItem({bid, thumbNaile, boardTitle, userName, crea
         const day = date.getDate();
         const hours = date.getHours();
         const minutes = date.getMinutes();
-
+        
+        if(userResponseDto.userPic != null){
+            setUserPic(userResponseDto.userPic);
+        }
         setFormattedDate(`${year}년 ${month}월 ${day}일 ${hours}:${minutes}`);
     }, [createdDate]); // createdDate가 변경될 때만 formattedDate를 업데이트
 
@@ -132,8 +135,8 @@ export default function GalleryItem({bid, thumbNaile, boardTitle, userName, crea
                     <AuthorContainer>
                         <AuthorPic src={userPic} />
                         <div>
-                            <AuthorName href={`profile/${userId}`}>{userName}</AuthorName>
-                            <AuthorDesc>37기 베이스</AuthorDesc>
+                            <AuthorName href={`profile/${userResponseDto.uid}`}>{userResponseDto.userName}</AuthorName>
+                            <AuthorDesc>{userResponseDto.userTh}기 {userResponseDto.session} </AuthorDesc>
                         </div>
                     </AuthorContainer>
                     <CreatedAt>{formattedDate}</CreatedAt>
