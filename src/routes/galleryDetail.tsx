@@ -102,9 +102,9 @@ export default function GalleryDetail(){
             <HomeKRTitle>갤러리</HomeKRTitle>
             <DetailTitle> {galleryItems?.boardTitle}</DetailTitle>
             <DetailAuthContainer>
-                {galleryItems?.userPic ? <DetailAuthorPic src={galleryItems.userPic} />
+                {galleryItems?.userResponseDto.userPic ? <DetailAuthorPic src={galleryItems.userResponseDto.userPic} />
                                         : <DetailAuthorPic src="public/cool_profile_pic.webp" />}
-                <DetailAuthor href={`/profile/${galleryItems?.userId}`}>작성자: {galleryItems?.userName} </DetailAuthor>
+                <DetailAuthor href={`/profile/${galleryItems?.userResponseDto.uid}`}>작성자: {galleryItems?.userResponseDto.userName} </DetailAuthor>
                 <DetailAuthDate>작성일시: {formattedDate}</DetailAuthDate>
                 <DetailView> 조회수: {galleryItems?.boardView}</DetailView>
             </DetailAuthContainer>

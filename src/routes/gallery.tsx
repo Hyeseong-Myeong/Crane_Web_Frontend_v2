@@ -3,7 +3,8 @@ import { HomeENGTitle, HomeKRTitle } from "../components/page-components";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import GalleryItem from "../components/gallery-item";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import Pagination from "../components/Pagination";
 
 export interface User{
     uid: number;
@@ -44,9 +45,27 @@ const PageContainer = styled.div`
 
 
 export default function Gallery(){
-    const { pageNum } = useParams();
+    // const { page } = useParams();
+    const[page, setPage] = useState<number>(1);
     const[galleryItems, setGalleryItems] = useState<GalleryPost[]>([]);
-    const[pageNumMax, setPageNumMax] = useState();
+    const[pageSize, setPageSize] = useState();
+    const[totalElements, setTotalElements] = useState();
+    const[totalPages, setTotalPages] = useState<number>(1);
+    const[isFirst, setIsFirst] = useState();
+    const[isLast, setIsLast] = useState();
+    const[isEmpty, setIsEmpty] = useState();
+    const[pageNumber, setpageNumber] = useState<number>(Number(page) || 1);
+
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const query = new URLSearchParams(location.search);
+
+    const goToPage = (pageNumber:number) => {
+        query.set('page', pageNumber.toString());
+        navigate(`${location.pathname}?${query.toString()}`);
+    };
+
 
     useEffect(() => {
         const fetchGallery = async() => {
@@ -54,15 +73,33 @@ export default function Gallery(){
                 `${import.meta.env.VITE_API_URL}/board/list`,
                 {params:{
                     "category": "GALLERY",
-                    "page" : pageNum
+                    "page" : page - 1
                 }}
             ).then(res => {
                 setGalleryItems(res.data.contents);
+                setPageSize(res.data.pageSize);
+                setTotalElements(res.data.totlaElements);
+                setTotalPages(res.data.totalPages);
+                setIsFirst(res.data.first);
+                setIsLast(res.data.last);
+                setIsEmpty(res.data.empty);
             })
             
         }
         fetchGallery();
-    }, [])
+        setpageNumber(Number(page) || 1); 
+    }, [page])
+
+    
+    useEffect(() => {
+        // URL에서 page 값을 읽어옴
+        const searchParams = new URLSearchParams(location.search);
+        const pageParam = searchParams.get('page');
+        
+        if (pageParam) {
+            setPage(Number(pageParam));  // 페이지 상태 업데이트
+        }
+    }, [location.search]);  // location.search가 바뀔 때마다 실행
 
     return(
         <Wrapper>
@@ -74,7 +111,13 @@ export default function Gallery(){
                 ))}
             </GalleryContainer>  
             <PageContainer>
-                
+                <Pagination
+                    page={pageNumber}
+                    setPage = {setpageNumber}
+                    totalPages={totalPages}
+                    goToPage={goToPage}
+                    link = {`gallery`}
+                />
             </PageContainer>
         </Wrapper>
     )

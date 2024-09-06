@@ -1,8 +1,7 @@
 import styled from "styled-components";
 import { GalleryPost } from "../routes/gallery";
 import { useEffect, useState } from "react";
-import { create } from "domain";
-import { deflate } from "zlib";
+import { Link } from "react-router-dom";
 
 const Wrapper = styled.div`
     font-family: "Noto Sans KR";
@@ -11,11 +10,9 @@ const Wrapper = styled.div`
     margin: 10px;
 `;
 
-const GalleryContainer = styled.a`
+const GalleryContainer = styled.div`
     width: 308px;
-    height: 524px;
-
-    text-decoration:none;
+    height: 424px;
 
     &:hover{
 
@@ -29,12 +26,8 @@ const GalleryImg = styled.img`
 `;
 
 const GalleryTitleContainer = styled.div`
-
 `;
 
-const Id = styled.div`
-    
-`
 
 const Title = styled.div`
     font-size: 20px;
@@ -68,7 +61,7 @@ const AuthorPic = styled.img`
     margin: 10px;
 `;
 
-const AuthorName = styled.a`
+const AuthorName = styled.div`
     font-size: 16px;
     font-weight: 400;
     color: #21272A;
@@ -121,27 +114,34 @@ export default function GalleryItem({bid, thumbNaile, boardTitle, userResponseDt
             setUserPic(userResponseDto.userPic);
         }
         setFormattedDate(`${year}년 ${month}월 ${day}일 ${hours}:${minutes}`);
-    }, [createdDate]); // createdDate가 변경될 때만 formattedDate를 업데이트
+    }, [createdDate]);
+
 
     return(
         <Wrapper>
-            <GalleryContainer href={`gallery/detail/${bid}`}>
-                { thumbNaile ? <GalleryImg src={thumbNaile} /> : <GalleryImg src="home_main.jpg" /> }
+            <Link to={`detail/${bid}`}  style={{ textDecoration: 'none' }}>
+                <GalleryContainer>
+                    { thumbNaile ? <GalleryImg src={thumbNaile} /> : <GalleryImg src="home_main.jpg" /> }
 
-                <GalleryTitleContainer>
-                    {/* <Id>{bid}</Id> */}
-                    <Title>{boardTitle}</Title>
-                    <Description>{TruncatedText(boardContents, 40)}</Description>
-                    <AuthorContainer>
-                        <AuthorPic src={userPic} />
-                        <div>
-                            <AuthorName href={`profile/${userResponseDto.uid}`}>{userResponseDto.userName}</AuthorName>
-                            <AuthorDesc>{userResponseDto.userTh}기 {userResponseDto.session} </AuthorDesc>
-                        </div>
-                    </AuthorContainer>
-                    <CreatedAt>{formattedDate}</CreatedAt>
-                </GalleryTitleContainer>
-            </GalleryContainer>
+                    <GalleryTitleContainer>
+                        {/* <Id>{bid}</Id> */}
+                        <Title>{boardTitle}</Title>
+                        <Description>{TruncatedText(boardContents, 40)}</Description>
+                        <AuthorContainer>
+                            <AuthorPic src={userPic} />
+                            <div>
+                                <Link to={`profile/${userResponseDto.uid}`} style={{ textDecoration: 'none' }}> 
+                                    <AuthorName>
+                                        {userResponseDto.userName} 
+                                    </AuthorName>
+                                </Link>
+                                <AuthorDesc>{userResponseDto.userTh}기 {userResponseDto.session} </AuthorDesc>
+                            </div>
+                        </AuthorContainer>
+                        <CreatedAt>{formattedDate}</CreatedAt>
+                    </GalleryTitleContainer>
+                </GalleryContainer>
+            </Link>
         </Wrapper>
     )
 }
