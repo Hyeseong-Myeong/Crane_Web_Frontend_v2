@@ -77,10 +77,11 @@ export default function Home(){
             axios.get(
                 `${import.meta.env.VITE_API_URL}/board/list`,
                 {params:{
-                    "BoardCategory": "GALLERY"
+                    "category": "GALLERY",
+                    "page" : 0
                 }}
             ).then(res => {
-                setGalleryItems(res.data);
+                setGalleryItems(res.data.contents);
             })
             
         }

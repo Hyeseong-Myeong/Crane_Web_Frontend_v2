@@ -44,7 +44,7 @@ const Button = styled.button`
   }
 `
 
-export default function Pagination({page, setPage, totalPages, goToPage, link} : pagenationProps){
+export default function Pagination({page, setPage, totalPages, goToPage} : pagenationProps){
     
     const navigate = useNavigate();
     const location = useLocation();

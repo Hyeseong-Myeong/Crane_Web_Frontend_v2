@@ -119,7 +119,7 @@ export default function GalleryItem({bid, thumbNaile, boardTitle, userResponseDt
 
     return(
         <Wrapper>
-            <Link to={`detail/${bid}`}  style={{ textDecoration: 'none' }}>
+            <Link to={`/gallery/detail/${bid}`}  style={{ textDecoration: 'none' }}>
                 <GalleryContainer>
                     { thumbNaile ? <GalleryImg src={thumbNaile} /> : <GalleryImg src="home_main.jpg" /> }
 
@@ -130,11 +130,11 @@ export default function GalleryItem({bid, thumbNaile, boardTitle, userResponseDt
                         <AuthorContainer>
                             <AuthorPic src={userPic} />
                             <div>
-                                <Link to={`profile/${userResponseDto.uid}`} style={{ textDecoration: 'none' }}> 
+                                {/* <Link to={`profile/${userResponseDto.uid}`} style={{ textDecoration: 'none' }}>  */}
                                     <AuthorName>
                                         {userResponseDto.userName} 
                                     </AuthorName>
-                                </Link>
+                                {/* </Link> */}
                                 <AuthorDesc>{userResponseDto.userTh}기 {userResponseDto.session} </AuthorDesc>
                             </div>
                         </AuthorContainer>
