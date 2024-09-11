@@ -54,7 +54,7 @@ export default function Gallery(){
     const[isFirst, setIsFirst] = useState();
     const[isLast, setIsLast] = useState();
     const[isEmpty, setIsEmpty] = useState();
-    const[pageNumber, setpageNumber] = useState<number>(Number(page) || 1);
+    const[pageNumber, setPageNumber] = useState<number>(Number(page) || 1);
 
     const location = useLocation();
     const navigate = useNavigate();
@@ -87,7 +87,7 @@ export default function Gallery(){
             
         }
         fetchGallery();
-        setpageNumber(Number(page) || 1); 
+        setPageNumber(Number(page) || 1); 
     }, [page])
 
     
@@ -113,7 +113,7 @@ export default function Gallery(){
             <PageContainer>
                 <Pagination
                     page={pageNumber}
-                    setPage = {setpageNumber}
+                    setPage = {setPageNumber}
                     totalPages={totalPages}
                     goToPage={goToPage}
                     link = {`gallery`}
