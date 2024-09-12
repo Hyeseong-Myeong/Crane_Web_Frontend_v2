@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { GalleryPost } from "../routes/gallery";
+import { BoardPost } from "../routes/gallery";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -98,7 +98,7 @@ export function TruncatedText(fullText: string, maxLen: number){
       return fullText;
 }
 
-export default function GalleryItem({bid, thumbNaile, boardTitle, userResponseDto, createdDate, boardContents, }:GalleryPost ){
+export default function GalleryItem({bid, thumbNaile, boardTitle, userResponseDto, createdDate, boardContents, }:BoardPost ){
     const [userPic, setUserPic] = useState("cool_profile_pic.webp")
     const [formattedDate, setFormattedDate] = useState("");
 

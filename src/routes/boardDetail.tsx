@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { GalleryPost } from "./gallery";
+import { BoardPost } from "./gallery";
 import { HomeENGTitle, HomeKRTitle } from "../components/page-components";
 
 const Wrapper = styled.div`
@@ -67,20 +67,20 @@ const ContentsContainer = styled.div`
     width: 70vw;
 `
 
-export default function GalleryDetail(){
+export default function BoardDetail(){
     const { boardId } = useParams();
-    const [galleryItems, setGalleryItems] = useState<GalleryPost>();
+    const [boardItems, setBoardItems] = useState<BoardPost>();
     const [formattedDate, setFormattedDate] = useState<string>("");
 
     useEffect(() => {
-        const fetchGallery = async () => {
+        const fetchBoard = async () => {
             const res = await axios.get(
                 `${import.meta.env.VITE_API_URL}/board/${boardId}`,
                 {
                     withCredentials: true,
                 }
             );
-            setGalleryItems(res.data);
+            setBoardItems(res.data);
 
             if (res.data.createdDate) {
                 const date = new Date(res.data.createdDate);
@@ -93,23 +93,23 @@ export default function GalleryDetail(){
                 setFormattedDate(`${year}년${month}월${day}일 ${hours}:${minutes}`);
             }
         };
-        fetchGallery();
+        fetchBoard();
     }, []);
 
     return (
         <Wrapper>
             <HomeENGTitle>GALLERY</HomeENGTitle>
             <HomeKRTitle>갤러리</HomeKRTitle>
-            <DetailTitle> {galleryItems?.boardTitle}</DetailTitle>
+            <DetailTitle> {boardItems?.boardTitle}</DetailTitle>
             <DetailAuthContainer>
-                {galleryItems?.userResponseDto.userPic ? <DetailAuthorPic src={galleryItems.userResponseDto.userPic} />
+                {boardItems?.userResponseDto.userPic ? <DetailAuthorPic src={boardItems.userResponseDto.userPic} />
                                         : <DetailAuthorPic src="public/cool_profile_pic.webp" />}
-                <DetailAuthor href={`/profile/${galleryItems?.userResponseDto.uid}`}>작성자: {galleryItems?.userResponseDto.userName} </DetailAuthor>
+                <DetailAuthor href={`/profile/${boardItems?.userResponseDto.uid}`}>작성자: {boardItems?.userResponseDto.userName} </DetailAuthor>
                 <DetailAuthDate>작성일시: {formattedDate}</DetailAuthDate>
-                <DetailView> 조회수: {galleryItems?.boardView}</DetailView>
+                <DetailView> 조회수: {boardItems?.boardView}</DetailView>
             </DetailAuthContainer>
             <ContentsContainer>
-                {galleryItems?.boardContents}
+                {boardItems?.boardContents}
             </ContentsContainer>
         </Wrapper>
     );

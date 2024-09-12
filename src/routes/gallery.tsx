@@ -14,7 +14,7 @@ export interface User{
     session: String;
 }
 
-export interface GalleryPost{
+export interface BoardPost{
     bid: string;
     boardTitle: string;
     boardContents: string;
@@ -47,7 +47,7 @@ const PageContainer = styled.div`
 export default function Gallery(){
     // const { page } = useParams();
     const[page, setPage] = useState<number>(1);
-    const[galleryItems, setGalleryItems] = useState<GalleryPost[]>([]);
+    const[galleryItems, setGalleryItems] = useState<BoardPost[]>([]);
     const[pageSize, setPageSize] = useState();
     const[totalElements, setTotalElements] = useState();
     const[totalPages, setTotalPages] = useState<number>(1);
@@ -57,14 +57,13 @@ export default function Gallery(){
     const[pageNumber, setPageNumber] = useState<number>(Number(page) || 1);
 
     const location = useLocation();
-    const navigate = useNavigate();
 
-    const query = new URLSearchParams(location.search);
+    // const query = new URLSearchParams(location.search);
 
-    const goToPage = (pageNumber:number) => {
-        query.set('page', pageNumber.toString());
-        navigate(`${location.pathname}?${query.toString()}`);
-    };
+    // const goToPage = (pageNumber:number) => {
+    //     query.set('page', pageNumber.toString());
+    //     navigate(`${location.pathname}?${query.toString()}`);
+    // };
 
 
     useEffect(() => {
@@ -115,7 +114,6 @@ export default function Gallery(){
                     page={pageNumber}
                     setPage = {setPageNumber}
                     totalPages={totalPages}
-                    goToPage={goToPage}
                     link = {`gallery`}
                 />
             </PageContainer>

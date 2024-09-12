@@ -6,7 +6,6 @@ interface pagenationProps{
     page: number;
     setPage: (page:number) => void;
     totalPages: number;
-    goToPage : (page:number) => void;
     link: string;
 }
 

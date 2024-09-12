@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components"
+import Pagination from "../components/Pagination";
 
 export interface User{
     uid: number;
@@ -107,6 +108,11 @@ const BoardTitle = styled.a`
     }
 `;
 
+const PageContainer = styled.div`
+
+`;
+
+
 export default function Board(){
     const [category, setCategory] = useState<string | null>("NOTICE");
     
@@ -119,7 +125,7 @@ export default function Board(){
     const[isLast, setIsLast] = useState();
     const[isEmpty, setIsEmpty] = useState();
     const[pageNumber, setPageNumber] = useState<number>(Number(page) || 1);
-
+    const[message, setMessage] = useState<string>("");
 
     const handleSelectCategory = (selectedCategory: string) => {
         setCategory(selectedCategory);
@@ -147,12 +153,23 @@ export default function Board(){
                 setIsFirst(res.data.first);
                 setIsLast(res.data.last);
                 setIsEmpty(res.data.empty);
+                setMessage(res.data.message);
             })
         }
-
+        
         fetchBoard();
         setPageNumber(Number(page) || 1); 
-    }, [category])
+    }, [category, page])
+
+    useEffect(() => {
+        // URL에서 page 값을 읽어옴
+        const searchParams = new URLSearchParams(location.search);
+        const pageParam = searchParams.get('page');
+        
+        if (pageParam) {
+            setPage(Number(pageParam));  // 페이지 상태 업데이트
+        }
+    }, [location.search]);  // location.search가 바뀔 때마다 실행
 
     return(
         <Wrapper>
@@ -221,34 +238,45 @@ export default function Board(){
                             </BoardTr>
                         </BoardThead>
                         <BoardTbody>
-                            {boardItems.map((item) => (
-                                
-                                <BoardTr key={item.bid}>
-                                    <BoardTh>
-                                        {item.bid}
-                                    </BoardTh>
-                                    
+                            {boardItems.length === 0 ? (
+                                <BoardTr>
+                                    <BoardTh colSpan={5}>빈 게시판</BoardTh> {/* colSpan으로 테이블 칸을 하나로 합침 */}
+                                </BoardTr>
+                            ) : (
+                                boardItems.map((item) => (
+                                    <BoardTr key={item.bid}>
                                         <BoardTh>
-                                            <BoardTitle href={``}>
+                                            {item.bid}
+                                        </BoardTh>
+                                        <BoardTh>
+                                            <BoardTitle href={`/board/detail/${item.bid}`}>
                                                 {item.boardTitle}
                                             </BoardTitle>
                                         </BoardTh>
-                                   
-                                    <BoardTh>
-                                        {`${item.userResponseDto.userTh}기 ${item.userResponseDto.userName}`}
-                                    </BoardTh>
-                                    <BoardTh className="date">
-                                        {formatDateString(item.createdDate.toString())}
-                                    </BoardTh>
-                                    <BoardTh>
-                                        {item.boardView}
-                                    </BoardTh>
-                                </BoardTr>
-                            ))}
+                                        <BoardTh>
+                                            {`${item.userResponseDto.userTh}기 ${item.userResponseDto.userName}`}
+                                        </BoardTh>
+                                        <BoardTh className="date">
+                                            {formatDateString(item.createdDate.toString())}
+                                        </BoardTh>
+                                        <BoardTh>
+                                            {item.boardView}
+                                        </BoardTh>
+                                    </BoardTr>
+                                ))
+                            )}
                         </BoardTbody>
                     </BoardTable>
                 </BoardContainer>
             </TabContainer>
+            <PageContainer>
+                <Pagination
+                    page={pageNumber}
+                    setPage = {setPageNumber}
+                    totalPages={totalPages}
+                    link = {`gallery`}
+                />
+            </PageContainer>
         </Wrapper>
     )
 }

@@ -14,7 +14,8 @@ import Team from './routes/team';
 import { useEffect, useState } from 'react';
 import LoadingScreen from './components/loading-screen';
 import ProtectedRoute from './components/protected-route';
-import GalleryDetail from './routes/galleryDetail';
+import GalleryDetail from './routes/boardDetail';
+import BoardDetail from './routes/boardDetail';
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
        {
         path: "board",
         element: <Board />
+       },
+       {
+          path: "board/detail/:boardId",
+          element: <BoardDetail />
        },
        {
         path: "reservation",
