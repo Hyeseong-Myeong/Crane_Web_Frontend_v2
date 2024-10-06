@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components"
 import Pagination from "../components/Pagination";
+import BoardTab from "../components/boardTab";
 
 export interface User{
     uid: number;
@@ -42,19 +43,7 @@ const SelectorContainer = styled.div`
     display:flex;
 `;
 
-const Selector = styled.div`
-    padding: 10px;
-    cursor: pointer;
-
-    font-size: 16px;
-
-
-    &:hover {
-        background-color: #f0f0f0;
-    }
-`;
-
-const SearchTab = styled.div`
+const Post = styled.div`
     
 `;
 
@@ -114,7 +103,7 @@ const PageContainer = styled.div`
 
 
 export default function Board(){
-    const [category, setCategory] = useState<string | null>("NOTICE");
+    const [category, setCategory] = useState<string>("NOTICE");
     
     const[page, setPage] = useState<number>(1);
     const[boardItems, setBoardItems] = useState<BoardPost[]>([]);
@@ -127,9 +116,7 @@ export default function Board(){
     const[pageNumber, setPageNumber] = useState<number>(Number(page) || 1);
     const[message, setMessage] = useState<string>("");
 
-    const handleSelectCategory = (selectedCategory: string) => {
-        setCategory(selectedCategory);
-    };
+
 
     function formatDateString(dateString: string) {
         const [datePart, timePart] = dateString.split('T'); // 'T'로 날짜와 시간 분리
@@ -165,56 +152,29 @@ export default function Board(){
         // URL에서 page 값을 읽어옴
         const searchParams = new URLSearchParams(location.search);
         const pageParam = searchParams.get('page');
+        const categoryParam = searchParams.get('category');
         
-        if (pageParam) {
+        if (pageParam != null) {
             setPage(Number(pageParam));  // 페이지 상태 업데이트
         }
+
+        if(categoryParam != null){
+            setCategory(categoryParam.toString());
+        }
     }, [location.search]);  // location.search가 바뀔 때마다 실행
+
 
     return(
         <Wrapper>
             <TabContainer>
                 <SelectorContainer>
-                    <Selector
-                        onClick={() => handleSelectCategory('NOTICE')}
-                        style={{
-                            fontWeight: category === 'NOTICE' ? 'bold' : 'normal',
-                            borderBottom: category === 'NOTICE' ? '2px solid #001D6C' : ''
-                        }}
-                    >      
-                        공지게시판 
-                    </Selector>
-                    <Selector
-                        onClick={() => handleSelectCategory('FREE')}
-                        style={{
-                            fontWeight: category === 'FREE' ? 'bold' : 'normal',
-                            borderBottom: category === 'FREE' ? '2px solid #001D6C' : ''
-                          }}
-                    >
-                        자유게시판 
-                    </Selector>
-                    <Selector
-                        onClick={() => handleSelectCategory('INSTRUMENT')}
-                        style={{
-                            fontWeight: category === 'INSTRUMENT' ? 'bold' : 'normal',
-                            borderBottom: category === 'INSTRUMENT' ? '2px solid #001D6C' : ''
-                          }}
-                    >
-                        장비게시판 
-                    </Selector>
-                    <Selector
-                        onClick={() => handleSelectCategory('ADMIN')}
-                        style={{
-                            fontWeight: category === 'ADMIN' ? 'bold' : 'normal',
-                            borderBottom: category === 'ADMIN' ? '2px solid #001D6C' : ''
-                          }}
-                    >
-                        임원게시판 
-                    </Selector>
+                    <BoardTab category={category} setCategory={setCategory} />    
                 </SelectorContainer>
-                <SearchTab>
 
-                </SearchTab>
+
+                <Post>
+                    
+                </Post>
 
                 <BoardContainer>
                     <BoardTable>
@@ -240,28 +200,16 @@ export default function Board(){
                         <BoardTbody>
                             {boardItems.length === 0 ? (
                                 <BoardTr>
-                                    <BoardTh colSpan={5}>빈 게시판</BoardTh> {/* colSpan으로 테이블 칸을 하나로 합침 */}
+                                    <BoardTh colSpan={5}>빈 게시판</BoardTh>
                                 </BoardTr>
                             ) : (
                                 boardItems.map((item) => (
                                     <BoardTr key={item.bid}>
-                                        <BoardTh>
-                                            {item.bid}
-                                        </BoardTh>
-                                        <BoardTh>
-                                            <BoardTitle href={`/board/detail/${item.bid}`}>
-                                                {item.boardTitle}
-                                            </BoardTitle>
-                                        </BoardTh>
-                                        <BoardTh>
-                                            {`${item.userResponseDto.userTh}기 ${item.userResponseDto.userName}`}
-                                        </BoardTh>
-                                        <BoardTh className="date">
-                                            {formatDateString(item.createdDate.toString())}
-                                        </BoardTh>
-                                        <BoardTh>
-                                            {item.boardView}
-                                        </BoardTh>
+                                        <BoardTh>{item.bid}</BoardTh>
+                                        <BoardTh><BoardTitle href={`/board/detail/${item.bid}`}>{item.boardTitle}</BoardTitle></BoardTh>
+                                        <BoardTh>{`${item.userResponseDto.userTh}기 ${item.userResponseDto.userName}`}</BoardTh>
+                                        <BoardTh className="date">{formatDateString(item.createdDate.toString())}</BoardTh>
+                                        <BoardTh>{item.boardView}</BoardTh>
                                     </BoardTr>
                                 ))
                             )}
@@ -277,6 +225,7 @@ export default function Board(){
                     link = {`gallery`}
                 />
             </PageContainer>
+
         </Wrapper>
     )
 }

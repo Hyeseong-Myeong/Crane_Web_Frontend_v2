@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { HomeENGTitle, HomeKRTitle } from "../components/page-components";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { GalleryContainer, GalleryPost } from "./gallery";
+import { GalleryContainer, BoardPost } from "./gallery";
 import GalleryItem from "../components/gallery-item";
 import { Link } from "react-router-dom";
 
@@ -66,13 +66,23 @@ const HomeLink = styled.button`
 
 
 export default function Home(){
+    const[noticeItems, setNoticeItems] = useState<BoardPost[]>([]);
+    const[galleryItems, setGalleryItems] = useState<BoardPost[]>([]);
 
-    const[galleryItems, setGalleryItems] = useState<GalleryPost[]>([]);
-
-
-    
 
     useEffect(() => {
+        const fetchNotice = async() => {
+            axios.get(
+                `${import.meta.env.VITE_API_URL}/board/list`,
+                {params:{
+                    "category": "NOTICE",
+                    "page" : 0
+                }}
+            ).then(res => {
+                setNoticeItems(res.data.contents);
+            })
+            
+        }
         const fetchGallery = async() => {
             axios.get(
                 `${import.meta.env.VITE_API_URL}/board/list`,
@@ -85,6 +95,8 @@ export default function Home(){
             })
             
         }
+
+        fetchNotice();
         fetchGallery();
     }, [])
 
@@ -96,7 +108,11 @@ export default function Home(){
             <HomeContainer>
                 <HomeENGTitle>NOTICE</HomeENGTitle>
                 <HomeKRTitle>공지사항</HomeKRTitle>
-
+                    <GalleryContainer>
+                        {noticeItems.slice(0,4).map((item) => (
+                            <GalleryItem key={item.bid}{...item} />
+                        ))}
+                    </GalleryContainer>
                 <HomeENGTitle>GALLERY</HomeENGTitle>
                 <HomeKRTitle>갤러리</HomeKRTitle>
                 <GalleryContainer>

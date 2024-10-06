@@ -3,7 +3,7 @@ import { HomeENGTitle, HomeKRTitle } from "../components/page-components";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import GalleryItem from "../components/gallery-item";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Pagination from "../components/Pagination";
 
 export interface User{
