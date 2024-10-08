@@ -56,15 +56,66 @@ const CalendarContainer = styled.div`
         &:hover{
             border-radius: 8px;;
         }
+
+        &:disabled{
+            border-radius: 0px;
+        }
+    }
+
+    .react-calendar__tile--active{
+        border-radius: 8px;
+        background-color: #006edc;
+        .today-label {
+            color: white; /* 선택된 타일의 today-label 색상 변경 */
+        }
+        .react-calendar__tile--now{
+            color: white;
+        }
     }
 
     .react-calendar__tile--now{
         border-radius: 8px;
+        color: #006edc;
+        background-color: white;
     }
+
+
+    .today-label{
+        color:#006edc;
+
+    }
+
 
     abbr{
         text-decoration: none;
     }
+
+    
+`
+
+const CaledarTimeContainer = styled.div`
+    display: block;
+    text-align: left;
+    align-self: flex-start;
+
+    margin-left: 20px;
+
+`
+
+const TimeTitle = styled.div`
+    font-size:14px;
+    margin-bottom: 8px;
+    
+`
+
+const TimeList = styled.ul`
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+`
+
+const TimeItem = styled.li`
+    list-style: none;
 `
 
 export type DatePiece = Date | null;
@@ -76,8 +127,31 @@ export default function Reservation(){
     const [selectedDate, setSelectedDate] = useState<SelectedDate>(new Date());
 
     useEffect(() => {
-        
+        setSelectedDate(new Date());
+    }, [])
+
+
+    useEffect(() => {
+
     }, [selectedDate])
+
+
+    const tileContent = ({ date, view }: { date: Date, view: string }) => {
+        if (view === 'month' && isToday(date)) {
+            return <div className="today-label">오늘</div>;
+        }
+        return null;
+    }
+
+    const isToday = (date: Date) => {
+        const today = new Date();
+        return (
+            date.getDate() === today.getDate() &&
+            date.getMonth() === today.getMonth() &&
+            date.getFullYear() === today.getFullYear()
+        );
+    }
+
 
     return (
         <Wrapper>
@@ -88,8 +162,22 @@ export default function Reservation(){
                     calendarType="gregory"
                     prev2Label={null}
                     next2Label={null}
+                    minDate={new Date()}
+                    tileContent={tileContent}
+                    defaultActiveStartDate={new Date()}
                 />
             </CalendarContainer>
+            <CaledarTimeContainer>
+                <TimeTitle>오전</TimeTitle>
+                <TimeList>
+
+                </TimeList>
+
+                <TimeTitle>오후</TimeTitle>
+                <TimeList>
+
+                </TimeList>
+            </CaledarTimeContainer>
         </Wrapper>
     )
 }
