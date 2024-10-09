@@ -94,41 +94,7 @@ export default function SignUp(){
             })
         }catch(err){
             console.log(err);
-        }
-
-        // await fetch("http://localhost:8080/api/users/signup",
-        //     {
-        //         method: "POST",
-        //         headers:{
-        //             "Content-Type":"application/json",
-        //         },
-        //         body: JSON.stringify(payload),
-        //     }
-        // ).then(res => {
-        //     if(!res.ok){
-        //         console.log(res);
-        //     }
-        //     return res.json();
-        // })
-        // .then(data => {
-        //     if(data.code === 200){
-        //         navigate("/");
-        //     }
-        //     else if(data.code === 409){
-        //         setIsLoading(false);
-        //         setSignInError("이미 사용중인 이메일입니다.");
-        //         throw new Error("이메일 중복");
-        //     }
-        //     else{
-        //         setIsLoading(true);
-        //         setSignInError("회원가입에 실패했습니다. 새로고침 후 다시 시도해주세요.")
-        //         throw new Error("회원가입에 실패했습니다.")
-        //     }
-        // })
-        // .catch(e => {
-        //     console.log(e);
-        // })
-            
+        }   
     }
 
     return(

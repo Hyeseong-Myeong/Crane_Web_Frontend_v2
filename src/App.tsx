@@ -16,6 +16,7 @@ import LoadingScreen from './components/loading-screen';
 import ProtectedRoute from './components/protected-route';
 import GalleryDetail from './routes/boardDetail';
 import BoardDetail from './routes/boardDetail';
+import EditBoard from './routes/editBoard';
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,13 @@ const router = createBrowserRouter([
        {
           path: "board/detail/:boardId",
           element: <BoardDetail />
+       },
+       {
+          path: "board/edit",
+          element: (<ProtectedRoute>
+                      <EditBoard />
+                    </ProtectedRoute>
+                    ),
        },
        {
         path: "reservation",

@@ -101,6 +101,22 @@ const PageContainer = styled.div`
 
 `;
 
+const Write = styled.a`
+     margin-left: auto; 
+    padding: 10px 20px;
+    background-color: #001D6C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+
+    margin-top: 10px;
+
+    &:hover {
+        background-color: #0056b3;
+    }
+`
+
 
 export default function Board(){
     const [category, setCategory] = useState<string>("NOTICE");
@@ -217,6 +233,9 @@ export default function Board(){
                     </BoardTable>
                 </BoardContainer>
             </TabContainer>
+            <Write href={`/board/edit`}>
+                글쓰기
+            </Write>
             <PageContainer>
                 <Pagination
                     page={pageNumber}
