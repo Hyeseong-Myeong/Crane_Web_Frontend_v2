@@ -18,12 +18,16 @@ const Wrapper = styled.div`
     align-items: center;
     font-family: "Noto Sans KR";
 `
-const Title = styled.span`
+const Title = styled.input`
     align-self: flex-start;
 
     font-size: 24px;
-    margin-top:10px;
+    margin-top:40px;
     margin-bottom: 10px;
+    width: 60vw;
+
+    border:none;
+    border-bottom: 1px solid #000;
 
 `
 
@@ -54,6 +58,7 @@ export default function EditBoard(){
     const navigate = useNavigate();
     const [userRole, setUserRole] = useState("")
     const [boardType, setBoardType] = useState("FREE");
+    const [boardTitle, setBoardTitle] = useState("");
     const [editorContent, setEditorContent] = useState<string>("");
 
     const onSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -61,8 +66,25 @@ export default function EditBoard(){
         setBoardType(e.target.value)
     }
 
+    const onTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        setBoardTitle(e.target.value);
+    }
+
     const handlePublish = () => {
-        console.log("게시글 내용:", editorContent);
+        const body = {
+            "boardTitle" : "",
+            "boardContents" : {editorContent},
+            "boardCategory" : {boardType}
+        }
+
+        try{
+            axios.post(
+                `${import.meta.env.VITE_API_URL}/board/createBoard`
+            )
+        }catch(err){
+
+        }
     };
 
     useEffect(()=> {
@@ -88,11 +110,16 @@ export default function EditBoard(){
         }
     },[])
 
+    useEffect(()=>{
+        console.log(boardTitle);
+    },[boardTitle])
+
     return(
         <Wrapper>
-            <Title>
-                새 글 작성
-            </Title>
+            <Title 
+                placeholder="게시글 제목" 
+                onChange={onTitleChange}    
+            />                
             <EditorContainer>
                 <Select onChange={onSelectChange}>
                     <Option value={""}>카테고리 선택</Option>
