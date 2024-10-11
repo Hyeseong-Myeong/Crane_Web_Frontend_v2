@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import { BoardPost } from "./gallery";
 import { HomeENGTitle, HomeKRTitle } from "../components/page-components";
+import 'react-quill/dist/quill.snow.css';
+import DOMPurify from "dompurify";
 
 const Wrapper = styled.div`
     display: flex;
@@ -65,12 +67,21 @@ const ContentsContainer = styled.div`
 
     text-align: left;
     width: 70vw;
+
 `
 
 export default function BoardDetail(){
     const { boardId } = useParams();
     const [boardItems, setBoardItems] = useState<BoardPost>();
     const [formattedDate, setFormattedDate] = useState<string>("");
+
+    const sanitizer = (content: string) => {
+        return DOMPurify.sanitize(content, {
+            ALLOWED_TAGS: ['span', 'p', 'strong', 'em', 'ul', 'ol', 'li'],  // 허용할 태그 목록
+            ALLOWED_ATTR: ['class'],  // class 속성을 허용
+        });
+    };
+
 
     useEffect(() => {
         const fetchBoard = async () => {
@@ -94,6 +105,7 @@ export default function BoardDetail(){
             }
         };
         fetchBoard();
+        
     }, []);
 
     return (
@@ -108,8 +120,8 @@ export default function BoardDetail(){
                 <DetailAuthDate>작성일시: {formattedDate}</DetailAuthDate>
                 <DetailView> 조회수: {boardItems?.boardView}</DetailView>
             </DetailAuthContainer>
-            <ContentsContainer>
-                {boardItems?.boardContents}
+            <ContentsContainer className="ql-editor">
+                <div dangerouslySetInnerHTML={{__html : sanitizer(`${boardItems?.boardContents}`) }} />
             </ContentsContainer>
         </Wrapper>
     );

@@ -72,16 +72,24 @@ export default function EditBoard(){
     }
 
     const handlePublish = () => {
-        const body = {
-            "boardTitle" : "",
-            "boardContents" : {editorContent},
-            "boardCategory" : {boardType}
+        const payload = {
+            boardTitle : boardTitle,
+            boardContents : editorContent,
+            boardCategory : boardType
         }
 
         try{
             axios.post(
-                `${import.meta.env.VITE_API_URL}/board/createBoard`
-            )
+                `${import.meta.env.VITE_API_URL}/board/createBoard`,
+                payload,
+                {
+                    withCredentials: true
+                },
+            ).then(res => {
+                if(res.status === 200){
+                    navigate(`/board`);
+                }
+            })
         }catch(err){
 
         }
