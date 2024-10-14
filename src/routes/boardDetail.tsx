@@ -92,7 +92,7 @@ export default function BoardDetail(){
 
     const sanitizer = (content: string) => {
         return DOMPurify.sanitize(content, {
-            ALLOWED_TAGS: ['span', 'p', 'strong', 'em', 'ul', 'ol', 'li','u', 's'],  // 허용할 태그 목록
+            ALLOWED_TAGS: ['span', 'p', 'strong', 'em', 'ul', 'ol', 'li','u', ],  // 허용할 태그 목록
             ALLOWED_ATTR: ['class'],  // class 속성을 허용
         });
     };
@@ -179,8 +179,8 @@ export default function BoardDetail(){
 
     return (
         <Wrapper>
-            <HomeENGTitle>GALLERY</HomeENGTitle>
-            <HomeKRTitle>갤러리</HomeKRTitle>
+            <HomeENGTitle>{boardItems?.boardCategory}</HomeENGTitle>
+            <HomeKRTitle>{boardItems?.boardCategory == "GALLERY" ? "갤러리" : "게시판"}</HomeKRTitle>
             <DetailTitle>{boardItems?.boardTitle}</DetailTitle>
             <DetailAuthContainer>
                 {boardItems?.userResponseDto.userPic ? <DetailAuthorPic src={boardItems.userResponseDto.userPic} />
