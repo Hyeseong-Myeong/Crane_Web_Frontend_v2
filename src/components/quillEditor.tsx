@@ -35,10 +35,11 @@ const Wrapper = styled.div`
 
 interface QuillEditorProps {
     setContent: (value: string) => void;
+    initialValue?: string; 
 }
 
-export default function QuillEditor({setContent} : QuillEditorProps) {
-    const [values, setValues] = useState<string>();
+export default function QuillEditor({setContent, initialValue = ""} : QuillEditorProps) {
+    const [values, setValues] = useState<string>(initialValue);
 
     const modules = useMemo(() => {
         return {

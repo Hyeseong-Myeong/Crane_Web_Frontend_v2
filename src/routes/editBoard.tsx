@@ -72,6 +72,18 @@ export default function EditBoard(){
     }
 
     const handlePublish = () => {
+
+        // 제목, 내용의 공백 체크
+        if (!boardTitle.trim()) {
+            alert("제목을 입력해 주세요.");
+            return;
+        }
+
+        if (!editorContent.trim()) {
+            alert("내용을 입력해 주세요.");
+            return;
+        }
+        
         const payload = {
             boardTitle : boardTitle,
             boardContents : editorContent,
@@ -118,9 +130,6 @@ export default function EditBoard(){
         }
     },[])
 
-    useEffect(()=>{
-        console.log(boardTitle);
-    },[boardTitle])
 
     return(
         <Wrapper>

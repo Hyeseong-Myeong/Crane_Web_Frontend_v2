@@ -1,11 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { BoardPost } from "./gallery";
 import { HomeENGTitle, HomeKRTitle } from "../components/page-components";
 import 'react-quill/dist/quill.snow.css';
 import DOMPurify from "dompurify";
+import QuillEditor from "../components/quillEditor";
 
 const Wrapper = styled.div`
     display: flex;
@@ -70,14 +71,28 @@ const ContentsContainer = styled.div`
 
 `
 
+const EditButton = styled.button`
+    
+`
+
+const SaveButton = styled.button`
+    padding: 10px;
+    margin-left: 10px;
+`;
+
 export default function BoardDetail(){
     const { boardId } = useParams();
     const [boardItems, setBoardItems] = useState<BoardPost>();
     const [formattedDate, setFormattedDate] = useState<string>("");
+    const [userEmail, setUserEmail] = useState<string>("");
+    const [authorEmail, setAuthorEmail] = useState<string>("")
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [updatedContent, setUpdatedContent] = useState<string>("");
+    const navigate = useNavigate();
 
     const sanitizer = (content: string) => {
         return DOMPurify.sanitize(content, {
-            ALLOWED_TAGS: ['span', 'p', 'strong', 'em', 'ul', 'ol', 'li'],  // 허용할 태그 목록
+            ALLOWED_TAGS: ['span', 'p', 'strong', 'em', 'ul', 'ol', 'li','u', 's'],  // 허용할 태그 목록
             ALLOWED_ATTR: ['class'],  // class 속성을 허용
         });
     };
@@ -92,6 +107,7 @@ export default function BoardDetail(){
                 }
             );
             setBoardItems(res.data);
+            setAuthorEmail(res.data.userResponseDto.userEmail);
 
             if (res.data.createdDate) {
                 const date = new Date(res.data.createdDate);
@@ -104,24 +120,87 @@ export default function BoardDetail(){
                 setFormattedDate(`${year}년${month}월${day}일 ${hours}:${minutes}`);
             }
         };
+        const getUser = async() => {
+            try{
+                axios.get(
+                    `${import.meta.env.VITE_API_URL}/users/userinfo`,
+                    {
+                        withCredentials: true
+                    },
+                )
+                .then(res => {
+                    if(res.status === 200){
+                        setUserEmail(res.data.data.userEmail)
+                    }else if(res.status === 401){
+                        
+                    }else {
+                        
+                    }
+                })
+            }catch(err){
+                console.log("인증 에러")
+            }
+        }
+       
         fetchBoard();
-        
+        getUser();
     }, []);
+
+    const handleSave = async () => {
+        const payload = {
+            boardTitle: boardItems?.boardTitle,
+            boardContents: updatedContent,
+            boardCategory: boardItems?.boardCategory,
+        };
+
+        try {
+            const res = await axios.put(
+                `${import.meta.env.VITE_API_URL}/board/updateBoard/${boardId}`,
+                payload,
+                { withCredentials: true }
+            );
+
+            if (res.status === 200) {
+                setBoardItems((prev) => {
+                    if (prev) {
+                        return {
+                            ...prev,  // 기존 상태 유지
+                            boardContents: updatedContent, // 수정된 내용을 상태에 반영
+                        };
+                    }
+                    return prev;  // prev가 undefined인 경우 그대로 반환
+                });
+            setIsEditing(false); // 수정 모드 해제
+        }
+        } catch (err) {
+            console.error("게시글 수정 실패", err);
+        }
+    };
 
     return (
         <Wrapper>
             <HomeENGTitle>GALLERY</HomeENGTitle>
             <HomeKRTitle>갤러리</HomeKRTitle>
-            <DetailTitle> {boardItems?.boardTitle}</DetailTitle>
+            <DetailTitle>{boardItems?.boardTitle}</DetailTitle>
             <DetailAuthContainer>
                 {boardItems?.userResponseDto.userPic ? <DetailAuthorPic src={boardItems.userResponseDto.userPic} />
                                         : <DetailAuthorPic src="public/cool_profile_pic.webp" />}
                 <DetailAuthor href={`/profile/${boardItems?.userResponseDto.uid}`}>작성자: {boardItems?.userResponseDto.userName} </DetailAuthor>
                 <DetailAuthDate>작성일시: {formattedDate}</DetailAuthDate>
-                <DetailView> 조회수: {boardItems?.boardView}</DetailView>
+                <DetailView>조회수: {boardItems?.boardView}</DetailView>
+                {userEmail === authorEmail && !isEditing &&
+                    <EditButton onClick={() => setIsEditing(true)}>수정하기</EditButton>
+                }
+                {isEditing &&
+                    <SaveButton onClick={handleSave}>저장하기</SaveButton>
+                }
             </DetailAuthContainer>
             <ContentsContainer className="ql-editor">
-                <div dangerouslySetInnerHTML={{__html : sanitizer(`${boardItems?.boardContents}`) }} />
+                {isEditing ? (
+                    <QuillEditor setContent={setUpdatedContent} initialValue={boardItems?.boardContents}/> 
+                ) : (
+                    <div dangerouslySetInnerHTML={{ __html: sanitizer(`${boardItems?.boardContents}`) }} />
+                )}
             </ContentsContainer>
         </Wrapper>
     );
