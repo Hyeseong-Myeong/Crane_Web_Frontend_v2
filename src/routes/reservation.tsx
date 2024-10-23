@@ -66,7 +66,7 @@ const CalendarContainer = styled.div`
         border-radius: 8px;
         background-color: #006edc;
         .today-label {
-            color: white; /* 선택된 타일의 today-label 색상 변경 */
+            color: #c9c9c9;
         }
         .react-calendar__tile--now{
             color: white;

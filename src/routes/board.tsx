@@ -102,7 +102,7 @@ const PageContainer = styled.div`
 `;
 
 const Write = styled.a`
-     margin-left: auto; 
+    margin-left: auto; 
     padding: 10px 20px;
     background-color: #001D6C;
     color: white;
