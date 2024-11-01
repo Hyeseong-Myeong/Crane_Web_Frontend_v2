@@ -2,19 +2,40 @@ import styled from "styled-components"
 import Calendar from "react-calendar"
 import 'react-calendar/dist/Calendar.css';
 import { useEffect, useState } from "react"
+import axios from "axios";
 
+export interface InstItem {
+    instName: string,
+    instBirth: string,
+    instUsable: boolean,
+    iid: number
+}
+
+export interface resItem {
+    rid: number,
+    resName : string | null,
+    resStartTime: Date,
+    reservationStatus: string | null,
+    resPossible: boolean,
+    iid: number,
+    uid: number,
+    tid: number
+}
 
 const Wrapper = styled.div`
     display: flex;
-    flex-direction:column;
-
+    flex-direction: column;
     margin-left: 15vw;
     margin-right: 15vw;
-
     align-items: center;
     font-family: "Noto Sans KR";
-    
+    margin-top: 80px;
 `
+
+const MyResLink = styled.a`
+    align-self: flex-end;
+`
+
 const CalendarContainer = styled.div`
     .react-calendar {
         width: 100%;
@@ -39,101 +60,230 @@ const CalendarContainer = styled.div`
         border: none;
         font-weight: 700;
         font-family: "Noto Sans KR";
-
     }
 
     .react-calendar__month-view__weekdays__weekday {
-        text-decoration: none;
         font-family: "Noto Sans KR";
         font-weight: 400;
         font-size: 15px;
-    
     }
 
-    .react-calendar__tile{
+    .react-calendar__tile {
         height: 50px;
 
-        &:hover{
-            border-radius: 8px;;
+        &:hover {
+            border-radius: 8px;
         }
 
-        &:disabled{
+        &:disabled {
             border-radius: 0px;
         }
     }
 
-    .react-calendar__tile--active{
+    .react-calendar__tile--active {
         border-radius: 8px;
         background-color: #006edc;
-        .today-label {
-            color: #c9c9c9;
-        }
-        .react-calendar__tile--now{
-            color: white;
-        }
     }
 
-    .react-calendar__tile--now{
+    .react-calendar__tile--now {
         border-radius: 8px;
         color: #006edc;
         background-color: white;
     }
 
-
-    .today-label{
-        color:#006edc;
-
+    .today-label {
+        color: #006edc;
     }
 
-
-    abbr{
+    abbr {
         text-decoration: none;
     }
-
-    
 `
 
-const CaledarTimeContainer = styled.div`
-    display: block;
-    text-align: left;
-    align-self: flex-start;
-
-    margin-left: 20px;
-
+const InstContainer = styled.div`
+    margin-top: 10px;
 `
 
-const TimeTitle = styled.div`
-    font-size:14px;
-    margin-bottom: 8px;
-    
-`
-
-const TimeList = styled.ul`
+const InstList = styled.ul`
     display: flex;
     gap: 8px;
     margin-top: 8px;
+    flex-wrap: wrap;
+    list-style:none;
+    
 `
 
-const TimeItem = styled.li`
+const InstListItem = styled.li<{ isSelectedItem: boolean }>`
     list-style: none;
+    border: 1px solid #c5c5c7;
+    border-radius: 8px;
+    font-size: 16px;
+    line-height: 38px;
+    padding: 10px;
+    background-color: ${({ isSelectedItem }) => (isSelectedItem ? "#006edc" : "white")};
+    cursor: pointer;
+
+    &:hover {
+        background-color: ${({ isSelectedItem }) => (isSelectedItem ? "#006edc" : "#f0f0f0")};
+    }
+`
+
+
+const CaledarTimeContainer = styled.div`
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+`
+
+const TimeTitle = styled.div`
+    font-size: 18px;
+    font-weight: 600;
+    align-self: flex-start;
+    margin-bottom: 8px;
+`
+
+const TimeList = styled.ul`
+    /* display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap; */
+
+    /* display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 8px;
+    margin-top: 8px;
+    justify-content: center; // 리스트 전체를 중앙에 정렬 */
+
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+    justify-content: center; 
+    list-style-type: style none;    
+    width: 100%
+
+`
+
+const TimeItem = styled.li<{ isSelected: boolean ; isDisabled: boolean }>`
+    list-style: none;
+    border: 1px solid #cccccc;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 400;
+
+    line-height: 38px;
+    background-color: ${({ isSelected, isDisabled }) =>
+        isDisabled ? "#e0e0e0" : isSelected ? "#006edc" : "white"};
+    cursor: ${({ isDisabled }) => (isDisabled ? "not-allowed" : "pointer")};
+    display: flex;
+    justify-content: center;
+    color: ${({ isDisabled }) => (isDisabled ? "#999999" : "black")};
+    width: calc(20% - 6px);
+
+    &:hover {
+        background-color: ${({ isSelected, isDisabled }) => 
+            isDisabled ? "#e0e0e0" : (isSelected ? "#006edc" : "#f0f0f0")};
+    }
+
+`
+
+const ResSubmit = styled.button<{isButtonAble: boolean }>`
+    margin: 60px;
+    font-size: 24px;
+    background-color: ${({ isButtonAble }) => 
+        isButtonAble ? "#006edc" : "#f0f0f0"};
+    border: none;
+    padding: 10px;
+    width: 50%;
+    cursor: ${({ isButtonAble }) => 
+        isButtonAble ? "pointer" : "not-allowed"};
 `
 
 export type DatePiece = Date | null;
 export type SelectedDate = DatePiece | [DatePiece, DatePiece];
 
+const formatDate = (date: Date) => {
+    return date.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    }).replace(/\s/g, '') // 모든 공백 제거
+    .replace(/\./g, '-') // 점을 하이픈으로 변경
+    .replace(/-$/, ''); // 마지막 하이픈 제거
+}
 
-
-export default function Reservation(){
+export default function Reservation() {
     const [selectedDate, setSelectedDate] = useState<SelectedDate>(new Date());
+    const [selectedInst, setSelectedInst] = useState<number | null>(null);
+    const [selectedRes, setSelectedRes] = useState<number | null>(null);
+    const [instList, setInstList] = useState<InstItem[]>([]);
+    const [amResList, setAmResList] = useState<resItem[]>([]);
+    const [pmResList, setPmResList] = useState<resItem[]>([]);
+    const [isButtonAble, setIsButtonAble] = useState<boolean>(false);
+
+    const splitByAmPm = (list: resItem[]) => {
+        return list.reduce<{ am : resItem[], pm: resItem[]}>((acc, item) => {
+            const hour = new Date(item.resStartTime).getHours();
+            if (hour < 12) {
+                acc.am.push(item); // 오전
+            } else {
+                acc.pm.push(item); // 오후
+            }
+            return acc;
+        }, { am: [], pm: [] });
+    };
 
     useEffect(() => {
+        const fetchInstList = async () => {
+            try {
+                const res = await axios.get(
+                    `${import.meta.env.VITE_API_URL}/inst/list`,
+                    { withCredentials: true }
+                );
+                setInstList(res.data);
+            } catch (err) {
+                console.log(err);
+            }
+        };
+
         setSelectedDate(new Date());
-    }, [])
+        fetchInstList();
 
+    }, []);
 
     useEffect(() => {
+        const fetchResTime = async() => {
+            if(selectedDate instanceof Date && selectedInst != null){
+                const date = formatDate(selectedDate);
+                try{
+                    const res = await axios.get(
+                        `${import.meta.env.VITE_API_URL}/reservation/date/${date}?iid=${selectedInst}`,
+                        { 
+                            withCredentials: true 
+                        }
+                    );
+                    const splitList = splitByAmPm(res.data); // resList 대신 res.data 사용
+                    setAmResList(splitList.am);
+                    setPmResList(splitList.pm);
 
-    }, [selectedDate])
+                }catch (err){
+                    console.log(err)
+                }
+            }
+        }
+
+        fetchResTime();
+        setSelectedRes(null);
+    },[selectedDate, selectedInst])
+
+    useEffect(()=>{
+        if(selectedDate == null || selectedDate == null || selectedRes == null){
+           setIsButtonAble(false); 
+        }else{
+            setIsButtonAble(true);
+        }
+    }, [selectedInst, selectedDate, selectedRes])
 
 
     const tileContent = ({ date, view }: { date: Date, view: string }) => {
@@ -152,9 +302,51 @@ export default function Reservation(){
         );
     }
 
+    const handleInstClick = (iid: number) => {
+        setSelectedInst(iid);
+    }
+
+    const submitRes = () => {
+        const makeRes = async() => {
+            try {
+                const response = await axios.get(
+                    `${import.meta.env.VITE_API_URL}/reservation/makeres/${selectedRes}`,
+                    { withCredentials: true }
+                );
+                
+                if (response.status === 200) {
+                    alert("예약이 완료되었습니다.");
+                    window.location.reload();
+                }
+            } catch (err) {
+                alert("예약이 실패하였습니다.");
+                window.location.reload();
+            }
+        };
+
+        makeRes();
+    }
 
     return (
         <Wrapper>
+            <MyResLink href="reservation/my">내 예약 보기 &gt; </MyResLink>
+            <InstContainer>
+                <InstList>
+                    {instList.length === 0 ? (
+                        <TimeTitle>선택 가능한 예약이 없습니다.</TimeTitle>
+                    ) : (
+                        instList.map((inst) => (
+                            <InstListItem 
+                                key={inst.iid} 
+                                isSelectedItem={selectedInst === inst.iid}
+                                onClick={() => handleInstClick(inst.iid)}
+                            >
+                                {inst.instName}
+                            </InstListItem>
+                        ))
+                    )}
+                </InstList>
+            </InstContainer>
             <CalendarContainer>
                 <Calendar 
                     onChange={setSelectedDate} 
@@ -170,14 +362,47 @@ export default function Reservation(){
             <CaledarTimeContainer>
                 <TimeTitle>오전</TimeTitle>
                 <TimeList>
-
+                    {amResList.map((res) => (
+                        <TimeItem
+                            key={res.rid}
+                            onClick={() => {if(res.resPossible) setSelectedRes(res.rid)}}
+                            isSelected={selectedRes === res.rid}
+                            isDisabled = {!res.resPossible}
+                        >
+                            {new Date(res.resStartTime).toLocaleTimeString('ko-KR', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false,
+                            })}
+                        </TimeItem>
+                    ))}
                 </TimeList>
-
                 <TimeTitle>오후</TimeTitle>
                 <TimeList>
-
+                    {pmResList.map((res) => (
+                        <TimeItem
+                            key={res.rid}
+                            onClick={() => {if(res.resPossible) setSelectedRes(res.rid)}}
+                            isSelected={selectedRes === res.rid}
+                            isDisabled = {!res.resPossible}
+                        >
+                            {new Date(res.resStartTime).toLocaleTimeString('ko-KR', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false,
+                            })}
+                        </TimeItem>
+                    ))}
                 </TimeList>
             </CaledarTimeContainer>
+
+            <ResSubmit
+                isButtonAble={isButtonAble}
+                disabled = {!isButtonAble}
+                onClick={submitRes}
+            >
+                예약하기
+            </ResSubmit>
         </Wrapper>
     )
 }

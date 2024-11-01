@@ -17,6 +17,7 @@ import ProtectedRoute from './components/protected-route';
 import GalleryDetail from './routes/boardDetail';
 import BoardDetail from './routes/boardDetail';
 import EditBoard from './routes/editBoard';
+import ReservationMy from './routes/reservationMy';
 
 const router = createBrowserRouter([
   {
@@ -59,6 +60,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Reservation />
+          </ProtectedRoute>
+          ),
+       },
+       {
+        path: "reservation/my",
+        element: (
+          <ProtectedRoute>
+            <ReservationMy />
           </ProtectedRoute>
           ),
        },
