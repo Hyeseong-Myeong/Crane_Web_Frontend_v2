@@ -24,13 +24,13 @@ const PhotoContainer = styled.div`
     
 `;
 
-const Slide = styled.div`
+// const Slide = styled.div`
 
-`;
+// `;
 
-const Show = styled.div`
+// const Show = styled.div`
     
-`;
+// `;
 
 const Photo = styled.img`
     width: 100vw;

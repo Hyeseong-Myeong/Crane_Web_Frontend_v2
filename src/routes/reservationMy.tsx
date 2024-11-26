@@ -67,7 +67,7 @@ const LowwerResBox = styled.div`
 `;
 
 export default function ReservationMy() {
-    const [resList, setResList] = useState<resItem[]>([]);
+    // const [resList, setResList] = useState<resItem[]>([]);
     const [instList, setInstList] = useState<instItem[]>([]);
     const [uid, setUid] = useState<number | null>(null);
 
@@ -115,7 +115,7 @@ export default function ReservationMy() {
                     `${import.meta.env.VITE_API_URL}/reservation/user/${uid}`,
                     { withCredentials: true }
                 );
-                setResList(res.data);
+                // setResList(res.data);
 
                 const now = new Date();
                 const upcoming = res.data

@@ -63,12 +63,12 @@ export default function Gallery(){
     // const { page } = useParams();
     const[page, setPage] = useState<number>(1);
     const[galleryItems, setGalleryItems] = useState<BoardPost[]>([]);
-    const[pageSize, setPageSize] = useState();
-    const[totalElements, setTotalElements] = useState();
+    // const[pageSize, setPageSize] = useState();
+    // const[totalElements, setTotalElements] = useState();
     const[totalPages, setTotalPages] = useState<number>(1);
-    const[isFirst, setIsFirst] = useState();
-    const[isLast, setIsLast] = useState();
-    const[isEmpty, setIsEmpty] = useState();
+    // const[isFirst, setIsFirst] = useState();
+    // const[isLast, setIsLast] = useState();
+    // const[isEmpty, setIsEmpty] = useState();
     const[pageNumber, setPageNumber] = useState<number>(Number(page) || 1);
     const [userRole, setUserRole] = useState("")
 
@@ -93,12 +93,12 @@ export default function Gallery(){
                 }}
             ).then(res => {
                 setGalleryItems(res.data.contents);
-                setPageSize(res.data.pageSize);
-                setTotalElements(res.data.totlaElements);
+                // setPageSize(res.data.pageSize);
+                // setTotalElements(res.data.totlaElements);
                 setTotalPages(res.data.totalPages);
-                setIsFirst(res.data.first);
-                setIsLast(res.data.last);
-                setIsEmpty(res.data.empty);
+                // setIsFirst(res.data.first);
+                // setIsLast(res.data.last);
+                // setIsEmpty(res.data.empty);
             })
             
         }

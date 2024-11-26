@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components"
 import Pagination from "../components/Pagination";
 import BoardTab from "../components/boardTab";
@@ -123,14 +122,14 @@ export default function Board(){
     
     const[page, setPage] = useState<number>(1);
     const[boardItems, setBoardItems] = useState<BoardPost[]>([]);
-    const[pageSize, setPageSize] = useState();
-    const[totalElements, setTotalElements] = useState();
+    // const[pageSize, setPageSize] = useState();
+    // const[totalElements, setTotalElements] = useState();
     const[totalPages, setTotalPages] = useState<number>(1);
-    const[isFirst, setIsFirst] = useState();
-    const[isLast, setIsLast] = useState();
-    const[isEmpty, setIsEmpty] = useState();
+    // const[isFirst, setIsFirst] = useState();
+    // const[isLast, setIsLast] = useState();
+    // const[isEmpty, setIsEmpty] = useState();
     const[pageNumber, setPageNumber] = useState<number>(Number(page) || 1);
-    const[message, setMessage] = useState<string>("");
+    // const[message, setMessage] = useState<string>("");
 
 
 
@@ -150,13 +149,13 @@ export default function Board(){
                 }}
             ).then(res => {
                 setBoardItems(res.data.contents);
-                setPageSize(res.data.pageSize);
-                setTotalElements(res.data.totlaElements);
+                // setPageSize(res.data.pageSize);
+                // setTotalElements(res.data.totlaElements);
                 setTotalPages(res.data.totalPages);
-                setIsFirst(res.data.first);
-                setIsLast(res.data.last);
-                setIsEmpty(res.data.empty);
-                setMessage(res.data.message);
+                // setIsFirst(res.data.first);
+                // setIsLast(res.data.last);
+                // setIsEmpty(res.data.empty);
+                // setMessage(res.data.message);
             })
         }
         
