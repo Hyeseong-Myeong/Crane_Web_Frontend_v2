@@ -146,6 +146,7 @@ export default function EditBoard(){
                             <Option value={"NOTICE"}>공지사항</Option> 
                             <Option value={"INSTRUMENT"}>장비 게시판</Option> 
                             <Option value={"ADMIN"}>임원 게시판</Option> 
+                            <Option value={"GALLERY"}>갤러리</Option>
                         </>
                     )}
                 

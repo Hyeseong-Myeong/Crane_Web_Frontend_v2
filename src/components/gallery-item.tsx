@@ -2,6 +2,8 @@ import styled from "styled-components";
 import { BoardPost } from "../routes/gallery";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import DOMPurify from "dompurify";
+
 
 const Wrapper = styled.div`
     font-family: "Noto Sans KR";
@@ -102,6 +104,13 @@ export default function GalleryItem({bid, thumbNaile, boardTitle, userResponseDt
     const [userPic, setUserPic] = useState("cool_profile_pic.webp")
     const [formattedDate, setFormattedDate] = useState("");
 
+    const sanitizer = (content: string) => {
+        return DOMPurify.sanitize(content, {
+            ALLOWED_TAGS: [],  // 허용할 태그 목록
+            ALLOWED_ATTR: [],  // class 속성을 허용
+        });
+    };
+
     useEffect(() => {
         const date = new Date(createdDate);
         const year = date.getFullYear();
@@ -126,7 +135,7 @@ export default function GalleryItem({bid, thumbNaile, boardTitle, userResponseDt
                     <GalleryTitleContainer>
                         {/* <Id>{bid}</Id> */}
                         <Title>{boardTitle}</Title>
-                        <Description>{TruncatedText(boardContents, 40)}</Description>
+                        <Description>{TruncatedText(sanitizer(boardContents), 40)}</Description>
                         <AuthorContainer>
                             <AuthorPic src={userPic} />
                             <div>

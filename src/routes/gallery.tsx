@@ -42,6 +42,21 @@ export const GalleryContainer = styled.div`
 const PageContainer = styled.div`
 
 `;
+const Write = styled.a`
+    margin-left: auto; 
+    padding: 10px 20px;
+    background-color: #001D6C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+
+    margin-top: 10px;
+
+    &:hover {
+        background-color: #0056b3;
+    }
+`
 
 
 export default function Gallery(){
@@ -55,6 +70,8 @@ export default function Gallery(){
     const[isLast, setIsLast] = useState();
     const[isEmpty, setIsEmpty] = useState();
     const[pageNumber, setPageNumber] = useState<number>(Number(page) || 1);
+    const [userRole, setUserRole] = useState("")
+
 
     const location = useLocation();
 
@@ -89,6 +106,29 @@ export default function Gallery(){
         setPageNumber(Number(page) || 1); 
     }, [page])
 
+    useEffect(()=> {
+        try{
+            axios.get(
+                `${import.meta.env.VITE_API_URL}/users/userinfo`,
+                {
+                    withCredentials: true
+                },
+            )
+            .then(res => {
+                if(res.status === 200){
+                    setUserRole(res.data.data.userRole)
+
+                }else if(res.status === 401){
+                    
+                }else {
+                    
+                }
+            })
+        }catch(err){
+            console.log("인증 에러")
+        }
+    },[])
+
     
     useEffect(() => {
         // URL에서 page 값을 읽어옴
@@ -109,6 +149,9 @@ export default function Gallery(){
                     <GalleryItem key={item.bid}{...item} />
                 ))}
             </GalleryContainer>  
+            {(userRole === "ROLE_ADMIN" || userRole === "ROLE_MANAGER") && (
+                <Write href={`/board/edit`}>글쓰기</Write>
+            )}
             <PageContainer>
                 <Pagination
                     page={pageNumber}

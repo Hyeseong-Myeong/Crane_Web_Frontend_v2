@@ -1,5 +1,5 @@
 export default function Team(){
     return (
-        <h1> team </h1>
+        <h1> Team Page TBC </h1>
     )
 }

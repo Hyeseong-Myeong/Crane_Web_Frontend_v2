@@ -108,11 +108,12 @@ export default function Home(){
             <HomeContainer>
                 <HomeENGTitle>NOTICE</HomeENGTitle>
                 <HomeKRTitle>공지사항</HomeKRTitle>
-                    <GalleryContainer>
-                        {noticeItems.slice(0,4).map((item) => (
-                            <GalleryItem key={item.bid}{...item} />
-                        ))}
-                    </GalleryContainer>
+                <GalleryContainer>
+                    {noticeItems.slice(0,4).map((item) => (
+                        <GalleryItem key={item.bid}{...item} />
+                    ))}
+                </GalleryContainer>
+                <Link to={"/board"}> <HomeLink> 더보기 </HomeLink> </Link>
                 <HomeENGTitle>GALLERY</HomeENGTitle>
                 <HomeKRTitle>갤러리</HomeKRTitle>
                 <GalleryContainer>
