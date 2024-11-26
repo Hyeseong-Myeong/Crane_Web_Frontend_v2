@@ -163,7 +163,7 @@ const TimeList = styled.ul`
     list-style-type: style none;    
     width: 100%
 
-`
+`;
 
 const TimeItem = styled.li<{ isSelected: boolean ; isDisabled: boolean }>`
     list-style: none;
@@ -186,7 +186,7 @@ const TimeItem = styled.li<{ isSelected: boolean ; isDisabled: boolean }>`
             isDisabled ? "#e0e0e0" : (isSelected ? "#006edc" : "#f0f0f0")};
     }
 
-`
+`;
 
 const ResSubmit = styled.button<{isButtonAble: boolean }>`
     margin: 60px;
@@ -198,7 +198,22 @@ const ResSubmit = styled.button<{isButtonAble: boolean }>`
     width: 50%;
     cursor: ${({ isButtonAble }) => 
         isButtonAble ? "pointer" : "not-allowed"};
-`
+`;
+
+const Notice = styled.div`
+    align-self: flex-start;
+    margin: 10px;
+    margin-top: 40px;
+
+    p{
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    li{
+        margin: 5px;
+    }
+`;
 
 export type DatePiece = Date | null;
 export type SelectedDate = DatePiece | [DatePiece, DatePiece];
@@ -226,9 +241,9 @@ export default function Reservation() {
         return list.reduce<{ am : resItem[], pm: resItem[]}>((acc, item) => {
             const hour = new Date(item.resStartTime).getHours();
             if (hour < 12) {
-                acc.am.push(item); // 오전
+                acc.am.push(item); 
             } else {
-                acc.pm.push(item); // 오후
+                acc.pm.push(item); 
             }
             return acc;
         }, { am: [], pm: [] });
@@ -365,9 +380,9 @@ export default function Reservation() {
                     {amResList.map((res) => (
                         <TimeItem
                             key={res.rid}
-                            onClick={() => {if(res.resPossible) setSelectedRes(res.rid)}}
+                            onClick={() => {if(res.resPossible && new Date(res.resStartTime).getTime() >= new Date().getTime() + 30 * 60 * 1000) setSelectedRes(res.rid)}}
                             isSelected={selectedRes === res.rid}
-                            isDisabled = {!res.resPossible}
+                            isDisabled = {!res.resPossible || new Date(res.resStartTime).getTime() < new Date().getTime() + 30 * 60 * 1000}
                         >
                             {new Date(res.resStartTime).toLocaleTimeString('ko-KR', {
                                 hour: '2-digit',
@@ -382,9 +397,9 @@ export default function Reservation() {
                     {pmResList.map((res) => (
                         <TimeItem
                             key={res.rid}
-                            onClick={() => {if(res.resPossible) setSelectedRes(res.rid)}}
+                            onClick={() => {if(res.resPossible && new Date(res.resStartTime).getTime() >= new Date().getTime() + 30 * 60 * 1000) setSelectedRes(res.rid)}}
                             isSelected={selectedRes === res.rid}
-                            isDisabled = {!res.resPossible}
+                            isDisabled = {!res.resPossible || new Date(res.resStartTime).getTime() < new Date().getTime() + 30 * 60 * 1000}
                         >
                             {new Date(res.resStartTime).toLocaleTimeString('ko-KR', {
                                 hour: '2-digit',
@@ -396,6 +411,16 @@ export default function Reservation() {
                 </TimeList>
             </CaledarTimeContainer>
 
+            <Notice>
+                <p>공지사항</p>
+                
+                    <li>모든 예약은 1주일 전부터 가능합니다</li>
+                    <li>합주 예약은 1주일 전 밤 12시 부터 가능합니다.</li>
+                    <li>장비 예약은 1주일 전 낮 12시 부터 가능합니다.</li>
+                    <li>철야 관련 예약은 회장 및 임원에 문의 바랍니다.</li>
+
+                
+            </Notice>
             <ResSubmit
                 isButtonAble={isButtonAble}
                 disabled = {!isButtonAble}

@@ -19,9 +19,25 @@ const Wrapper = styled.div`
     margin-top: 80px;
 `;
 
-const Reservation = styled.a``;
+const Reservation = styled.a`
+    padding: 10px;
+`;
 
-const ResContainer = styled.div``;
+const ResContainer = styled.div`
+    margin: 10px;
+
+
+    h2{
+        font-size: 18px;
+        font-weight: 600;
+    };
+
+    p{
+        text-align: center;
+        margin: 50px
+    }
+
+`;
 
 const ResBlock = styled.div`
     margin: 10px;
@@ -54,6 +70,10 @@ export default function ReservationMy() {
     const [resList, setResList] = useState<resItem[]>([]);
     const [instList, setInstList] = useState<instItem[]>([]);
     const [uid, setUid] = useState<number | null>(null);
+
+    // 예약 상태별 배열
+    const [upcomingReservations, setUpcomingReservations] = useState<resItem[]>([]);
+    const [pastReservations, setPastReservations] = useState<resItem[]>([]);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -96,6 +116,23 @@ export default function ReservationMy() {
                     { withCredentials: true }
                 );
                 setResList(res.data);
+
+                const now = new Date();
+                const upcoming = res.data
+                    .filter((reservation: resItem) => new Date(reservation.resStartTime) >= now)
+                    .sort(
+                        (a: resItem, b: resItem) =>
+                            new Date(a.resStartTime).getTime() - new Date(b.resStartTime).getTime()
+                    );
+                const past = res.data
+                    .filter((reservation: resItem) => new Date(reservation.resStartTime) < now)
+                    .sort(
+                        (a: resItem, b: resItem) =>
+                            new Date(a.resStartTime).getTime() - new Date(b.resStartTime).getTime()
+                    );
+
+                setUpcomingReservations(upcoming);
+                setPastReservations(past);
             } catch (err) {
                 console.log(err);
             }
@@ -124,7 +161,7 @@ export default function ReservationMy() {
                         { withCredentials: true }
                     );
                     if (res.status === 200) {
-                        window.location.reload()                    
+                        fetchResList(); // 데이터 새로 고침
                     }
                 } catch (err) {
                     console.log(err);
@@ -138,35 +175,75 @@ export default function ReservationMy() {
         <Wrapper>
             <Reservation href="/reservation"> &lt; 예약 바로가기</Reservation>
             <ResContainer>
-                {resList.map((reservation) => {
-                    const instrument = instList.find(inst => inst.iid === reservation.iid);
-                    return (
-                        <ResBlock key={reservation.rid}>
-                            <UpperResBox>
-                                {instrument ? instrument.instName : "장비 정보 없음"}
-                                <ResCancelButton
-                                    onClick={() => onClickCancelRes(reservation.rid)}
-                                >
-                                    예약 취소
-                                </ResCancelButton>
-                            </UpperResBox>
-                            <LowwerResBox>
-                                <p>
-                                    {new Date(reservation.resStartTime).toLocaleDateString('ko-KR', {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric',
-                                    })}{" "}
-                                    {new Date(reservation.resStartTime).toLocaleTimeString('ko-KR', {
-                                        hour: 'numeric',
-                                        minute: 'numeric',
-                                    })}
-                                </p>
-                                {getStatusLabel(reservation.reservationStatus)}
-                            </LowwerResBox>
-                        </ResBlock>
-                    );
-                })}
+                <h2>다가오는 예약</h2>
+                {upcomingReservations.length > 0 ? (
+                    upcomingReservations.map((reservation) => {
+                        const instrument = instList.find(inst => inst.iid === reservation.iid);
+                        return (
+                            <ResBlock key={reservation.rid}>
+                                <UpperResBox>
+                                    {instrument ? instrument.instName : "장비 정보 없음"}
+                                    <ResCancelButton
+                                        onClick={() => onClickCancelRes(reservation.rid)}
+                                    >
+                                        예약 취소
+                                    </ResCancelButton>
+                                </UpperResBox>
+                                <LowwerResBox>
+                                    <div>
+                                        {new Date(reservation.resStartTime).toLocaleDateString('ko-KR', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric',
+                                        })}{" "}
+                                        {new Date(reservation.resStartTime).toLocaleTimeString('ko-KR', {
+                                            hour: 'numeric',
+                                            minute: 'numeric',
+                                        })}
+                                    </div>
+                                    {getStatusLabel(reservation.reservationStatus)}
+                                </LowwerResBox>
+                            </ResBlock>
+                        );
+                    })
+                ) : (
+                    <p>예약 내역이 없습니다</p>
+                )}
+            </ResContainer>
+
+            <ResContainer>
+                <h2>지난 예약</h2>
+                {pastReservations.length > 0 ? (
+                    pastReservations.map((reservation) => {
+                        const instrument = instList.find(inst => inst.iid === reservation.iid);
+                        return (
+                            <ResBlock key={reservation.rid}>
+                                <UpperResBox>
+                                    {instrument ? instrument.instName : "장비 정보 없음"}
+                                    <ResCancelButton disabled>
+                                        취소 불가
+                                    </ResCancelButton>
+                                </UpperResBox>
+                                <LowwerResBox>
+                                    <div>
+                                        {new Date(reservation.resStartTime).toLocaleDateString('ko-KR', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric',
+                                        })}{" "}
+                                        {new Date(reservation.resStartTime).toLocaleTimeString('ko-KR', {
+                                            hour: 'numeric',
+                                            minute: 'numeric',
+                                        })}
+                                    </div>
+                                    {getStatusLabel(reservation.reservationStatus)}
+                                </LowwerResBox>
+                            </ResBlock>
+                        );
+                    })
+                ) : (
+                    <p>예약 내역이 없습니다</p>
+                )}
             </ResContainer>
         </Wrapper>
     );
