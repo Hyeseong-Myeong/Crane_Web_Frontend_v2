@@ -1,11 +1,16 @@
 import axios from "axios";
 
 export default async function getUserInfo(){
+
+    const token = localStorage.getItem('authorization');
+
     try{
         const res = await axios.get(
-            `${import.meta.env.VITE_API_URL}/users/userinfo`,
+            `${import.meta.env.VITE_API_URL}/users/my`,
             {
-                withCredentials: true
+                headers: {
+                    Authorization: `Bearer ${token}`, 
+                }
             },
         );
         
@@ -24,16 +29,21 @@ export default async function getUserInfo(){
 }
 
 export async function logout(){
+    const token = localStorage.getItem('authorization');
+
     try{
         await axios.post(
-            `${import.meta.env.VITE_API_URL}/auth/logout`,
+            `${import.meta.env.VITE_API_URL}/users/logout`,
             {},
             {
-                withCredentials: true   
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
             },
             
         );
-
+        localStorage.removeItem('authorization');
+        
         return true;
     }catch(err){
         console.log("로그아웃 실패")

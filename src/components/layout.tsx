@@ -45,7 +45,7 @@ export default function Layout(){
                     const data = await getUserInfo();
                     if(data){
                         setIsLoggedIn(true);
-                        setUsername(data.userName);
+                        setUsername(data.name);
                         setUserProfilePic(data.profilePic || "/cool_profile_pic.webp");
                         setNumNoti(data.numNoti || 0);
                     }

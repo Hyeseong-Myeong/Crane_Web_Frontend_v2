@@ -33,8 +33,8 @@ export default function Login(){
         }
         //create payload
         const payload = {
-            userEmail : email,
-            userPassword : password
+            email : email,
+            password : password
         }
         
         setIsLoading(true);
@@ -43,13 +43,20 @@ export default function Login(){
         //로그인
         try{ 
             axios.post(
-                `${import.meta.env.VITE_API_URL}/auth/login`,
+                `${import.meta.env.VITE_API_URL}/users/login`,
                 payload,
                 {
                     withCredentials: true,
                 }
             ).then(res =>{
                 if(res.status === 200){
+                    // JWT 추출 (헤더에서 Authorization 가져오기) 및 저장
+                    const authHeader = res.headers['authorization']; // 응답 헤더에서 JWT 추출
+                    if (authHeader) {
+                        const token = authHeader.split(' ')[1]; // "Bearer" 제거
+                        localStorage.setItem('authorization', token); // Local Storage에 저장
+                    }
+                    
                     navigate("/")
                 } else if(res.data.code === 400){
                     setIsLoading(false);

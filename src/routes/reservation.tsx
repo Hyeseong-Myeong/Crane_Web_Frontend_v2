@@ -5,10 +5,9 @@ import { useEffect, useState } from "react"
 import axios from "axios";
 
 export interface InstItem {
-    instName: string,
-    instBirth: string,
-    instUsable: boolean,
-    iid: number
+    name: string,
+    isActive: boolean,
+    instrumentId: number
 }
 
 export interface resItem {
@@ -229,6 +228,9 @@ const formatDate = (date: Date) => {
 }
 
 export default function Reservation() {
+
+    const token = localStorage.getItem('authorization');
+
     const [selectedDate, setSelectedDate] = useState<SelectedDate>(new Date());
     const [selectedInst, setSelectedInst] = useState<number | null>(null);
     const [selectedRes, setSelectedRes] = useState<number | null>(null);
@@ -253,10 +255,15 @@ export default function Reservation() {
         const fetchInstList = async () => {
             try {
                 const res = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/inst/list`,
-                    { withCredentials: true }
+                    `${import.meta.env.VITE_API_URL}/instruments`,
+                    { 
+                        headers: {
+                            Authorization: `Bearer ${token}`, 
+                        }                    
+                    }
                 );
-                setInstList(res.data);
+                console.log(res.data.data)
+                setInstList(res.data.data);
             } catch (err) {
                 console.log(err);
             }
@@ -326,7 +333,11 @@ export default function Reservation() {
             try {
                 const response = await axios.get(
                     `${import.meta.env.VITE_API_URL}/reservation/makeres/${selectedRes}`,
-                    { withCredentials: true }
+                    { 
+                        headers: {
+                            Authorization: `Bearer ${token}`, 
+                        }
+                    }
                 );
                 
                 if (response.status === 200) {
@@ -352,11 +363,11 @@ export default function Reservation() {
                     ) : (
                         instList.map((inst) => (
                             <InstListItem 
-                                key={inst.iid} 
-                                isSelectedItem={selectedInst === inst.iid}
-                                onClick={() => handleInstClick(inst.iid)}
+                                key={inst.instrumentId} 
+                                isSelectedItem={selectedInst === inst.instrumentId}
+                                onClick={() => handleInstClick(inst.instrumentId)}
                             >
-                                {inst.instName}
+                                {inst.name}
                             </InstListItem>
                         ))
                     )}
