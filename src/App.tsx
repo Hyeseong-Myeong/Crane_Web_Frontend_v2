@@ -18,6 +18,9 @@ import GalleryDetail from './routes/boardDetail';
 import BoardDetail from './routes/boardDetail';
 import EditBoard from './routes/editBoard';
 import ReservationMy from './routes/reservationMy';
+import { requestForToken, onMessageListener, registerServiceWorker } from './config/firebase.ts';
+import { MessagePayload } from 'firebase/messaging';
+
 
 const router = createBrowserRouter([
   {
@@ -116,15 +119,42 @@ const Wrapper = styled.div`
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const [notification, setNotification] = useState<MessagePayload | null>(null); // 타입 명시
+
   const init = async() => {
     //사용자 로그인 정보 가져오기
     // await getUserInfo();
     setIsLoading(false);
   }
+
   useEffect(() => {
     init();
   }, []);
 
+
+  useEffect(() => {
+    registerServiceWorker();
+
+    requestForToken();
+    let messageListener: Promise<any>; // messageListener의 타입을 명시적으로 지정
+
+    messageListener = onMessageListener().then(payload => {
+      setNotification(payload);
+      console.log("새로운 알림: ", payload);
+      if(payload.notification) {
+        new Notification(payload.notification.title || "새 알림", {
+          body: payload.notification.body || "알림 내용이 없습니다."
+        });
+      }
+    });
+
+    return () => {
+      messageListener.then(unsubscribe => {
+        unsubscribe(); // 필요시 구독 해제
+      })
+    }
+  }, [])
+  
   return (
     <Wrapper>
       <GlobalStyles />
@@ -133,4 +163,4 @@ function App() {
   )
 }
 
-export default App
+export default App;

@@ -64,7 +64,7 @@ export default function Gallery(){
     const[page, setPage] = useState<number>(1);
     const[galleryItems, setGalleryItems] = useState<BoardPost[]>([]);
     // const[pageSize, setPageSize] = useState();
-    // const[totalElements, setTotalElements] = useState();
+    const[totalElements, setTotalElements] = useState();
     const[totalPages, setTotalPages] = useState<number>(1);
     // const[isFirst, setIsFirst] = useState();
     // const[isLast, setIsLast] = useState();
@@ -86,7 +86,7 @@ export default function Gallery(){
     useEffect(() => {
         const fetchGallery = async() => {
             axios.get(
-                `${import.meta.env.VITE_API_URL}/board/list`,
+                `${import.meta.env.VITE_API_URL}/boards`,
                 {params:{
                     "category": "GALLERY",
                     "page" : page - 1
@@ -94,7 +94,7 @@ export default function Gallery(){
             ).then(res => {
                 setGalleryItems(res.data.contents);
                 // setPageSize(res.data.pageSize);
-                // setTotalElements(res.data.totlaElements);
+                setTotalElements(res.data.datatotlaElements);
                 setTotalPages(res.data.totalPages);
                 // setIsFirst(res.data.first);
                 // setIsLast(res.data.last);

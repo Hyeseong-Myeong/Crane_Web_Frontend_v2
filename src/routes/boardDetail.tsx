@@ -141,16 +141,20 @@ export default function BoardDetail(){
         };
 
         const getUser = async() => {
+            const token = localStorage.getItem('authorization');
+
             try{
                 axios.get(
-                    `${import.meta.env.VITE_API_URL}/users/userinfo`,
+                    `${import.meta.env.VITE_API_URL}/users/my`,
                     {
-                        withCredentials: true
+                        headers: {
+                            Authorization: `Bearer ${token}`, 
+                        }                          
                     },
                 )
                 .then(res => {
                     if(res.status === 200){
-                        setUserEmail(res.data.data.userEmail)
+                        setUserEmail(res.data.data.email)
                     }else if(res.status === 401){
                         
                     }else {
@@ -174,6 +178,8 @@ export default function BoardDetail(){
     }, [isEditing, boardItems]);
 
     const handleSave = async () => {
+        const token = localStorage.getItem('authorization');
+
         const payload = {
             boardTitle: updatedTitle,
             boardContents: updatedContent,
@@ -184,7 +190,11 @@ export default function BoardDetail(){
             const res = await axios.put(
                 `${import.meta.env.VITE_API_URL}/board/updateBoard/${boardId}`,
                 payload,
-                { withCredentials: true }
+                { 
+                    headers: {
+                        Authorization: `Bearer ${token}`, 
+                    }                 
+                }
             );
 
             if (res.status === 200) {

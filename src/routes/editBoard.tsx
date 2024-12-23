@@ -59,6 +59,7 @@ export default function EditBoard(){
     const [userRole, setUserRole] = useState("")
     const [boardType, setBoardType] = useState("FREE");
     const [boardTitle, setBoardTitle] = useState("");
+    const [attatchFile, setAttatchFile] = useState();
     const [editorContent, setEditorContent] = useState<string>("");
 
     const onSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -85,17 +86,22 @@ export default function EditBoard(){
         }
         
         const payload = {
-            boardTitle : boardTitle,
-            boardContents : editorContent,
-            boardCategory : boardType
+            title : boardTitle,
+            content : editorContent,
+            boardCategory : boardType,
+            attatchFile : attatchFile
         }
 
         try{
+            const token = localStorage.getItem('authorization');
+
             axios.post(
-                `${import.meta.env.VITE_API_URL}/board/createBoard`,
+                `${import.meta.env.VITE_API_URL}/boards/write`,
                 payload,
                 {
-                    withCredentials: true
+                    headers: {
+                        Authorization: `Bearer ${token}`, 
+                    }
                 },
             ).then(res => {
                 if(res.status === 200){
@@ -108,11 +114,15 @@ export default function EditBoard(){
     };
 
     useEffect(()=> {
+        const token = localStorage.getItem('authorization');
+
         try{
             axios.get(
-                `${import.meta.env.VITE_API_URL}/users/userinfo`,
+                `${import.meta.env.VITE_API_URL}/users/my`,
                 {
-                    withCredentials: true
+                    headers: {
+                        Authorization: `Bearer ${token}`, 
+                    }      
                 },
             )
             .then(res => {
@@ -141,7 +151,7 @@ export default function EditBoard(){
                 <Select onChange={onSelectChange}>
                     <Option value={""}>카테고리 선택</Option>
                     <Option value={"FREE"}>자유 게시판</Option>
-                    { (userRole === "ROLE_ADMIN" || userRole === "ROLE_MANAGER") && ( 
+                    { (userRole === "ADMIN" || userRole === "MANAGER") && ( 
                         <>
                             <Option value={"NOTICE"}>공지사항</Option> 
                             <Option value={"INSTRUMENT"}>장비 게시판</Option> 

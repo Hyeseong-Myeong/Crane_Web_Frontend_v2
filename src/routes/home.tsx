@@ -73,10 +73,11 @@ export default function Home(){
     useEffect(() => {
         const fetchNotice = async() => {
             axios.get(
-                `${import.meta.env.VITE_API_URL}/board/list`,
+                `${import.meta.env.VITE_API_URL}/boards`,
                 {params:{
                     "category": "NOTICE",
-                    "page" : 0
+                    "page" : 0,
+                    "size" : 4
                 }}
             ).then(res => {
                 setNoticeItems(res.data.contents);
@@ -85,10 +86,11 @@ export default function Home(){
         }
         const fetchGallery = async() => {
             axios.get(
-                `${import.meta.env.VITE_API_URL}/board/list`,
+                `${import.meta.env.VITE_API_URL}/boards`,
                 {params:{
                     "category": "GALLERY",
-                    "page" : 0
+                    "page" : 0,
+                    "size" : 4
                 }}
             ).then(res => {
                 setGalleryItems(res.data.contents);

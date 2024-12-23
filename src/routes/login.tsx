@@ -41,36 +41,29 @@ export default function Login(){
 
 
         //로그인
-        try{ 
-            axios.post(
+        try {
+            const res = await axios.post(
                 `${import.meta.env.VITE_API_URL}/users/login`,
-                payload,
-                {
-                    withCredentials: true,
+                payload
+            );
+        
+            if (res.status === 200) {
+                const authHeader = res.headers['authorization'];
+                if (authHeader) {
+                    const token = authHeader.split(' ')[1];
+                    localStorage.setItem('authorization', token);
                 }
-            ).then(res =>{
-                if(res.status === 200){
-                    // JWT 추출 (헤더에서 Authorization 가져오기) 및 저장
-                    const authHeader = res.headers['authorization']; // 응답 헤더에서 JWT 추출
-                    if (authHeader) {
-                        const token = authHeader.split(' ')[1]; // "Bearer" 제거
-                        localStorage.setItem('authorization', token); // Local Storage에 저장
-                    }
-                    
-                    navigate("/")
-                } else if(res.data.code === 400){
-                    setIsLoading(false);
-                    setSignInError("아이디 또는 비밀번호가 잘못되었습니다.");
-                    throw new Error("입력 오류");
-                }else{
-                    setIsLoading(true);
-                    setSignInError("로그인 오류. 새로고침 후 다시 시도해 주세요.");
-                    throw new Error("로그인 오류")
-                }
-            })
-        } catch(error){
-            console.log(error);
-        }            
+                navigate("/");
+            }
+        } catch (error: any) { // AxiosError 타입으로 추가 확인 가능
+            if (error.response?.status === 404) { // 404 상태 확인
+                setIsLoading(false);
+                setSignInError("비밀번호가 잘못되었습니다.");
+            } else {
+                setIsLoading(false);
+                setSignInError("로그인 오류. 새로고침 후 다시 시도해 주세요.");
+            }
+        }
     }
 
     return(

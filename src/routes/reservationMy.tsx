@@ -4,10 +4,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export interface instItem {
-    iid: number;
-    instName: string;
-    instBirth: string;
-    instUseable: boolean;
+    instrumentId: number;
+    name: string;
+    isActive: boolean;
 }
 
 const Wrapper = styled.div`
@@ -67,6 +66,9 @@ const LowwerResBox = styled.div`
 `;
 
 export default function ReservationMy() {
+    const token = localStorage.getItem('authorization');
+
+
     // const [resList, setResList] = useState<resItem[]>([]);
     const [instList, setInstList] = useState<instItem[]>([]);
     const [uid, setUid] = useState<number | null>(null);
@@ -79,8 +81,12 @@ export default function ReservationMy() {
         const fetchUser = async () => {
             try {
                 const res = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/users/userinfo`,
-                    { withCredentials: true }
+                    `${import.meta.env.VITE_API_URL}/users/my`,
+                    { 
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        }  
+                    }
                 );
                 setUid(res.data.data.uid);
             } catch (err) {
@@ -91,8 +97,12 @@ export default function ReservationMy() {
         const fetchInst = async () => {
             try {
                 const res = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/inst/list`,
-                    { withCredentials: true }
+                    `${import.meta.env.VITE_API_URL}/instruments`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        }
+                    }
                 );
                 setInstList(res.data);
             } catch (err) {
@@ -106,62 +116,70 @@ export default function ReservationMy() {
 
     useEffect(() => {
         fetchResList();
-    }, [uid]);
+    }, []);
 
     const fetchResList = async () => {
-        if (uid !== null) {
-            try {
-                const res = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/reservation/user/${uid}`,
-                    { withCredentials: true }
+        
+        try {
+            const res = await axios.get(
+                `${import.meta.env.VITE_API_URL}/reservations/listbyuser`,
+                { 
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                }
+            );
+            // setResList(res.data);
+            console.log(res.data.data)
+            const now = new Date();
+            const upcoming = res.data.data
+                .filter((reservation: resItem) => new Date(reservation.time) >= now)
+                .sort(
+                    (a: resItem, b: resItem) =>
+                        new Date(a.time).getTime() - new Date(b.time).getTime()
                 );
-                // setResList(res.data);
+            const past = res.data.data
+                .filter((reservation: resItem) => new Date(reservation.time) < now)
+                .sort(
+                    (a: resItem, b: resItem) =>
+                        new Date(a.time).getTime() - new Date(b.time).getTime()
+                );
 
-                const now = new Date();
-                const upcoming = res.data
-                    .filter((reservation: resItem) => new Date(reservation.resStartTime) >= now)
-                    .sort(
-                        (a: resItem, b: resItem) =>
-                            new Date(a.resStartTime).getTime() - new Date(b.resStartTime).getTime()
-                    );
-                const past = res.data
-                    .filter((reservation: resItem) => new Date(reservation.resStartTime) < now)
-                    .sort(
-                        (a: resItem, b: resItem) =>
-                            new Date(a.resStartTime).getTime() - new Date(b.resStartTime).getTime()
-                    );
-
-                setUpcomingReservations(upcoming);
-                setPastReservations(past);
-            } catch (err) {
-                console.log(err);
-            }
+            setUpcomingReservations(upcoming);
+            setPastReservations(past);
+        } catch (err) {
+            console.log(err);
         }
+        
     };
 
     const getStatusLabel = (status: string | null) => {
         switch (status) {
-            case "WAIT_APPROVAL":
+            case "PENDING":
                 return "승인 대기중";
-            case "APPROVED":
+            case "CONFIRMED":
                 return "승인 됨";
-            case "RETURNED":
-                return "반려됨";
+            case "CANCELLED":
+                return "취소됨";
             default:
                 return "알 수 없음";
         }
     };
 
-    const onClickCancelRes = (rid: number) => {
+    const onClickCancelRes = (reservationId: number) => {
         if (window.confirm("정말 취소하시겠습니까?")) {
             const cancelRes = async () => {
                 try {
                     const res = await axios.get(
-                        `${import.meta.env.VITE_API_URL}/reservation/${rid}/cancel`,
-                        { withCredentials: true }
+                        `${import.meta.env.VITE_API_URL}/reservations/cancel?reservationId=${reservationId}`,
+                        { 
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            }
+                        }
                     );
                     if (res.status === 200) {
-                        fetchResList(); // 데이터 새로 고침
+                        fetchResList();
                     }
                 } catch (err) {
                     console.log(err);
@@ -178,30 +196,30 @@ export default function ReservationMy() {
                 <h2>다가오는 예약</h2>
                 {upcomingReservations.length > 0 ? (
                     upcomingReservations.map((reservation) => {
-                        const instrument = instList.find(inst => inst.iid === reservation.iid);
+                        const instrument = reservation.instrument;
                         return (
-                            <ResBlock key={reservation.rid}>
+                            <ResBlock key={reservation.reservationId}>
                                 <UpperResBox>
-                                    {instrument ? instrument.instName : "장비 정보 없음"}
+                                    {instrument ? instrument.name : "장비 정보 없음"}
                                     <ResCancelButton
-                                        onClick={() => onClickCancelRes(reservation.rid)}
+                                        onClick={() => onClickCancelRes(reservation.reservationId)}
                                     >
                                         예약 취소
                                     </ResCancelButton>
                                 </UpperResBox>
                                 <LowwerResBox>
                                     <div>
-                                        {new Date(reservation.resStartTime).toLocaleDateString('ko-KR', {
+                                        {new Date(reservation.time).toLocaleDateString('ko-KR', {
                                             year: 'numeric',
                                             month: 'long',
                                             day: 'numeric',
                                         })}{" "}
-                                        {new Date(reservation.resStartTime).toLocaleTimeString('ko-KR', {
+                                        {new Date(reservation.time).toLocaleTimeString('ko-KR', {
                                             hour: 'numeric',
                                             minute: 'numeric',
                                         })}
                                     </div>
-                                    {getStatusLabel(reservation.reservationStatus)}
+                                    {getStatusLabel(reservation.status)}
                                 </LowwerResBox>
                             </ResBlock>
                         );
@@ -215,28 +233,28 @@ export default function ReservationMy() {
                 <h2>지난 예약</h2>
                 {pastReservations.length > 0 ? (
                     pastReservations.map((reservation) => {
-                        const instrument = instList.find(inst => inst.iid === reservation.iid);
+                        const instrument = instList.find(inst => inst.instrumentId === reservation.instrument.instrumentId);
                         return (
-                            <ResBlock key={reservation.rid}>
+                            <ResBlock key={reservation.reservationId}>
                                 <UpperResBox>
-                                    {instrument ? instrument.instName : "장비 정보 없음"}
+                                    {instrument ? instrument.name : "장비 정보 없음"}
                                     <ResCancelButton disabled>
                                         취소 불가
                                     </ResCancelButton>
                                 </UpperResBox>
                                 <LowwerResBox>
                                     <div>
-                                        {new Date(reservation.resStartTime).toLocaleDateString('ko-KR', {
+                                        {new Date(reservation.time).toLocaleDateString('ko-KR', {
                                             year: 'numeric',
                                             month: 'long',
                                             day: 'numeric',
                                         })}{" "}
-                                        {new Date(reservation.resStartTime).toLocaleTimeString('ko-KR', {
+                                        {new Date(reservation.time).toLocaleTimeString('ko-KR', {
                                             hour: 'numeric',
                                             minute: 'numeric',
                                         })}
                                     </div>
-                                    {getStatusLabel(reservation.reservationStatus)}
+                                    {getStatusLabel(reservation.status)}
                                 </LowwerResBox>
                             </ResBlock>
                         );
