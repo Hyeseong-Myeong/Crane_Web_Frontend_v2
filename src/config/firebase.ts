@@ -1,6 +1,7 @@
 import axios from "axios";
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, MessagePayload, onMessage } from "firebase/messaging";
+import { config } from "process";
 // import {isMobile,isTablet, isDesktop} from 'react-device-detect';
 
 
@@ -34,7 +35,13 @@ const messaging = getMessaging(app);
 export const registerServiceWorker = async () => {
     if ('serviceWorker' in navigator) {
         try {
-            const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+            const configString = JSON.stringify(firebaseConfig);
+            const encodedConfig = btoa(configString)
+
+
+            const registration = await navigator.serviceWorker.register(
+                `/firebase-messaging-sw.js?config=${encodedConfig}`
+            );
             // console.log('Service Worker registered:', registration);
             return registration;
         } catch (error) {
