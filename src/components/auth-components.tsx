@@ -1,4 +1,5 @@
 import axios from "axios";
+import { FCMlogout } from "../config/firebase";
 
 export default async function getUserInfo(){
 
@@ -42,6 +43,7 @@ export async function logout(){
             },
             
         );
+        FCMlogout();
         localStorage.removeItem('authorization');
         
         return true;
