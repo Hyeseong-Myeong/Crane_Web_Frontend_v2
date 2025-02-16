@@ -8,10 +8,13 @@ import path from 'path';
 export default defineConfig({
 
   server: {
-    https: {
-        key: fs.readFileSync(path.resolve(__dirname, 'key.pem')),
-        cert: fs.readFileSync(path.resolve(__dirname, 'cert.pem')),
-    },
+//     https: {
+//         key: fs.readFileSync(path.resolve(__dirname, 'key.pem')),
+//         cert: fs.readFileSync(path.resolve(__dirname, 'cert.pem')),
+//     },
+    headers: {
+      'Service-Worker-Allowed' : '/'
+    }
 },
 
   plugins: [

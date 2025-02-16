@@ -5,21 +5,18 @@ import { useEffect, useState } from "react"
 import axios from "axios";
 
 export interface InstItem {
-    instName: string,
-    instBirth: string,
-    instUsable: boolean,
-    iid: number
+    name: string,
+    isActive: boolean,
+    instrumentId: number
 }
 
 export interface resItem {
-    rid: number,
-    resName : string | null,
-    resStartTime: Date,
-    reservationStatus: string | null,
-    resPossible: boolean,
-    iid: number,
-    uid: number,
-    tid: number
+    reservationId: number,
+    time: Date,
+    status: string | null,
+    possible: boolean,
+    instrument: InstItem,
+    userId: number
 }
 
 const Wrapper = styled.div`
@@ -113,18 +110,20 @@ const InstList = styled.ul`
     
 `
 
-const InstListItem = styled.li<{ isSelectedItem: boolean }>`
+const InstListItem = styled.li<{ isSelectedItem: boolean; isActive: boolean }>`
     list-style: none;
     border: 1px solid #c5c5c7;
     border-radius: 8px;
     font-size: 16px;
     line-height: 38px;
     padding: 10px;
-    background-color: ${({ isSelectedItem }) => (isSelectedItem ? "#006edc" : "white")};
-    cursor: pointer;
+    background-color: ${({ isSelectedItem, isActive }) => 
+        !isActive ? "#f0f0f0" : isSelectedItem ? "#006edc" : "white"};    cursor: ${({ isActive }) => (isActive ? "pointer" : "not-allowed")};
+    pointer-events: ${({ isActive }) => (isActive ? "auto" : "none")}; 
 
     &:hover {
-        background-color: ${({ isSelectedItem }) => (isSelectedItem ? "#006edc" : "#f0f0f0")};
+        background-color: ${({ isSelectedItem, isActive }) =>
+            isActive ? (isSelectedItem ? "#006edc" : "#f0f0f0") : "white"}; // 비활성 상태 색상 유지
     }
 `
 
@@ -179,7 +178,7 @@ const TimeItem = styled.li<{ isSelected: boolean ; isDisabled: boolean }>`
     display: flex;
     justify-content: center;
     color: ${({ isDisabled }) => (isDisabled ? "#999999" : "black")};
-    width: calc(20% - 6px);
+    width: 15vw;;
 
     &:hover {
         background-color: ${({ isSelected, isDisabled }) => 
@@ -229,6 +228,9 @@ const formatDate = (date: Date) => {
 }
 
 export default function Reservation() {
+
+    const token = localStorage.getItem('authorization');
+
     const [selectedDate, setSelectedDate] = useState<SelectedDate>(new Date());
     const [selectedInst, setSelectedInst] = useState<number | null>(null);
     const [selectedRes, setSelectedRes] = useState<number | null>(null);
@@ -239,7 +241,7 @@ export default function Reservation() {
 
     const splitByAmPm = (list: resItem[]) => {
         return list.reduce<{ am : resItem[], pm: resItem[]}>((acc, item) => {
-            const hour = new Date(item.resStartTime).getHours();
+            const hour = new Date(item.time).getHours();
             if (hour < 12) {
                 acc.am.push(item); 
             } else {
@@ -253,10 +255,14 @@ export default function Reservation() {
         const fetchInstList = async () => {
             try {
                 const res = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/inst/list`,
-                    { withCredentials: true }
+                    `${import.meta.env.VITE_API_URL}/instruments`,
+                    { 
+                        headers: {
+                            Authorization: `Bearer ${token}`, 
+                        }                    
+                    }
                 );
-                setInstList(res.data);
+                setInstList(res.data.data);
             } catch (err) {
                 console.log(err);
             }
@@ -273,12 +279,15 @@ export default function Reservation() {
                 const date = formatDate(selectedDate);
                 try{
                     const res = await axios.get(
-                        `${import.meta.env.VITE_API_URL}/reservation/date/${date}?iid=${selectedInst}`,
+                        `${import.meta.env.VITE_API_URL}/reservations/listbydate?date=${date}&instrumentId=${selectedInst}`,
                         { 
-                            withCredentials: true 
+                            headers: {
+                            Authorization: `Bearer ${token}`, 
+                            }                          
                         }
                     );
-                    const splitList = splitByAmPm(res.data); // resList 대신 res.data 사용
+                    console.log(res.data.data)
+                    const splitList = splitByAmPm(res.data.data);
                     setAmResList(splitList.am);
                     setPmResList(splitList.pm);
 
@@ -325,8 +334,12 @@ export default function Reservation() {
         const makeRes = async() => {
             try {
                 const response = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/reservation/makeres/${selectedRes}`,
-                    { withCredentials: true }
+                    `${import.meta.env.VITE_API_URL}/reservations/make?reservationId=${selectedRes}`,
+                    { 
+                        headers: {
+                            Authorization: `Bearer ${token}`, 
+                        }
+                    }
                 );
                 
                 if (response.status === 200) {
@@ -348,15 +361,16 @@ export default function Reservation() {
             <InstContainer>
                 <InstList>
                     {instList.length === 0 ? (
-                        <TimeTitle>선택 가능한 예약이 없습니다.</TimeTitle>
+                        <TimeTitle>선택 가능한 장비가 없습니다.</TimeTitle>
                     ) : (
                         instList.map((inst) => (
                             <InstListItem 
-                                key={inst.iid} 
-                                isSelectedItem={selectedInst === inst.iid}
-                                onClick={() => handleInstClick(inst.iid)}
+                                key={inst.instrumentId} 
+                                isSelectedItem={selectedInst === inst.instrumentId}
+                                isActive = {inst.isActive}
+                                onClick={() => handleInstClick(inst.instrumentId)}
                             >
-                                {inst.instName}
+                                {inst.name}
                             </InstListItem>
                         ))
                     )}
@@ -379,12 +393,12 @@ export default function Reservation() {
                 <TimeList>
                     {amResList.map((res) => (
                         <TimeItem
-                            key={res.rid}
-                            onClick={() => {if(res.resPossible && new Date(res.resStartTime).getTime() >= new Date().getTime() + 30 * 60 * 1000) setSelectedRes(res.rid)}}
-                            isSelected={selectedRes === res.rid}
-                            isDisabled = {!res.resPossible || new Date(res.resStartTime).getTime() < new Date().getTime() + 30 * 60 * 1000}
+                            key={res.reservationId}
+                            onClick={() => {if(res.possible && new Date(res.time).getTime() >= new Date().getTime() + 30 * 60 * 1000) setSelectedRes(res.reservationId)}}
+                            isSelected={selectedRes === res.reservationId}
+                            isDisabled = {!res.possible || new Date(res.time).getTime() < new Date().getTime() + 30 * 60 * 1000}
                         >
-                            {new Date(res.resStartTime).toLocaleTimeString('ko-KR', {
+                            {new Date(res.time).toLocaleTimeString('ko-KR', {
                                 hour: '2-digit',
                                 minute: '2-digit',
                                 hour12: false,
@@ -396,12 +410,12 @@ export default function Reservation() {
                 <TimeList>
                     {pmResList.map((res) => (
                         <TimeItem
-                            key={res.rid}
-                            onClick={() => {if(res.resPossible && new Date(res.resStartTime).getTime() >= new Date().getTime() + 30 * 60 * 1000) setSelectedRes(res.rid)}}
-                            isSelected={selectedRes === res.rid}
-                            isDisabled = {!res.resPossible || new Date(res.resStartTime).getTime() < new Date().getTime() + 30 * 60 * 1000}
+                            key={res.reservationId}
+                            onClick={() => {if(res.possible && new Date(res.time).getTime() >= new Date().getTime() + 30 * 60 * 1000) setSelectedRes(res.reservationId)}}
+                            isSelected={selectedRes === res.reservationId}
+                            isDisabled = {!res.possible || new Date(res.time).getTime() < new Date().getTime() + 30 * 60 * 1000}
                         >
-                            {new Date(res.resStartTime).toLocaleTimeString('ko-KR', {
+                            {new Date(res.time).toLocaleTimeString('ko-KR', {
                                 hour: '2-digit',
                                 minute: '2-digit',
                                 hour12: false,

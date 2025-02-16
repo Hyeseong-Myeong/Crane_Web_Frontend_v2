@@ -18,6 +18,7 @@ export default function SignUp(){
     const [phoneNumber, setPhoneNumber] = useState("");
     const [birthday, setBirthday] = useState("");
     const [session, setSession] = useState("");
+    const [th, setTh] = useState(new Date().getFullYear() - 1982 + 1);
 
     const onChange = (e : React.ChangeEvent<HTMLInputElement>) => {
         const {target: {name, value}} = e;
@@ -37,6 +38,8 @@ export default function SignUp(){
             setBirthday(value);
         }else if(name === "session"){
             setSession(value);
+        }else if(name === "th"){
+            setTh(parseInt(value));
         }
     }
     
@@ -55,20 +58,23 @@ export default function SignUp(){
             dept==="" || 
             phoneNumber === "" || 
             birthday === "" ||  
-            session === ""){
+            session === ""||
+            th == null
+        ){
                 console.log(name, email, password, studentId, dept, phoneNumber, birthday, session)
             return;
         }
         //create payload
         const payload = {
-            userEmail : email,
-            userPassword : password,
-            userName: name,
-            userDept: dept,
-            userStdId: studentId,
-            userPhNum:  phoneNumber,
-            userBirth: birthday,
-            userSession :session
+            email : email,
+            password : password,
+            name: name,
+            department: dept,
+            studentId: studentId,
+            phone:  phoneNumber,
+            birth: birthday,
+            session :session,
+            th: th
         }
         
         setIsLoading(true);
@@ -76,7 +82,7 @@ export default function SignUp(){
         //계정 생성
         try{
             axios.post(
-                `${import.meta.env.VITE_API_URL}/users/signup`,
+                `${import.meta.env.VITE_API_URL}/users`,
                 payload,
             )
             .then(res => {
@@ -158,6 +164,15 @@ export default function SignUp(){
                         value={phoneNumber}
                         placeholder="전화번호"
                         type="text"
+                        required
+                    />
+                    <InputTitle>기수</InputTitle>
+                    <Input
+                        onChange={onChange} 
+                        name="th"
+                        value={th}
+                        placeholder="기수"
+                        type="number"
                         required
                     />
                     <InputTitle>세션</InputTitle>

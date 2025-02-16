@@ -69,29 +69,33 @@ export default function Home(){
     const[noticeItems, setNoticeItems] = useState<BoardPost[]>([]);
     const[galleryItems, setGalleryItems] = useState<BoardPost[]>([]);
 
+    const token = localStorage.getItem('authorization');
+
 
     useEffect(() => {
         const fetchNotice = async() => {
             axios.get(
-                `${import.meta.env.VITE_API_URL}/board/list`,
-                {params:{
-                    "category": "NOTICE",
-                    "page" : 0
-                }}
+                `${import.meta.env.VITE_API_URL}/boards/category/NOTICE`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, 
+                    } 
+                }
             ).then(res => {
-                setNoticeItems(res.data.contents);
+                setNoticeItems(res.data.data.content);
             })
             
         }
         const fetchGallery = async() => {
             axios.get(
-                `${import.meta.env.VITE_API_URL}/board/list`,
-                {params:{
-                    "category": "GALLERY",
-                    "page" : 0
-                }}
+                `${import.meta.env.VITE_API_URL}/boards/category/GALLERY`,
+                {
+                    headers: {
+                    Authorization: `Bearer ${token}`, 
+                } 
+            }
             ).then(res => {
-                setGalleryItems(res.data.contents);
+                setGalleryItems(res.data.data.content);
             })
             
         }
@@ -110,7 +114,7 @@ export default function Home(){
                 <HomeKRTitle>공지사항</HomeKRTitle>
                 <GalleryContainer>
                     {noticeItems.slice(0,4).map((item) => (
-                        <GalleryItem key={item.bid}{...item} />
+                        <GalleryItem key={item.boardId}{...item} />
                     ))}
                 </GalleryContainer>
                 <Link to={"/board"}> <HomeLink> 더보기 </HomeLink> </Link>
@@ -118,7 +122,7 @@ export default function Home(){
                 <HomeKRTitle>갤러리</HomeKRTitle>
                 <GalleryContainer>
                     {galleryItems.slice(0,4).map((item) => (
-                        <GalleryItem key={item.bid}{...item} />
+                        <GalleryItem key={item.boardId}{...item} />
                     ))}
                 </GalleryContainer>
                 <Link to={"/gallery"}> <HomeLink> 더보기 </HomeLink> </Link>

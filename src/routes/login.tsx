@@ -33,37 +33,37 @@ export default function Login(){
         }
         //create payload
         const payload = {
-            userEmail : email,
-            userPassword : password
+            email : email,
+            password : password
         }
         
         setIsLoading(true);
 
 
         //로그인
-        try{ 
-            axios.post(
-                `${import.meta.env.VITE_API_URL}/auth/login`,
-                payload,
-                {
-                    withCredentials: true,
+        try {
+            const res = await axios.post(
+                `${import.meta.env.VITE_API_URL}/users/login`,
+                payload
+            );
+        
+            if (res.status === 200) {
+                const authHeader = res.headers['authorization'];
+                if (authHeader) {
+                    const token = authHeader.split(' ')[1];
+                    localStorage.setItem('authorization', token);
                 }
-            ).then(res =>{
-                if(res.status === 200){
-                    navigate("/")
-                } else if(res.data.code === 400){
-                    setIsLoading(false);
-                    setSignInError("아이디 또는 비밀번호가 잘못되었습니다.");
-                    throw new Error("입력 오류");
-                }else{
-                    setIsLoading(true);
-                    setSignInError("로그인 오류. 새로고침 후 다시 시도해 주세요.");
-                    throw new Error("로그인 오류")
-                }
-            })
-        } catch(error){
-            console.log(error);
-        }            
+                navigate("/");
+            }
+        } catch (error: any) { // AxiosError 타입으로 추가 확인 가능
+            if (error.response?.status === 404) { // 404 상태 확인
+                setIsLoading(false);
+                setSignInError("비밀번호가 잘못되었습니다.");
+            } else {
+                setIsLoading(false);
+                setSignInError("로그인 오류. 새로고침 후 다시 시도해 주세요.");
+            }
+        }
     }
 
     return(

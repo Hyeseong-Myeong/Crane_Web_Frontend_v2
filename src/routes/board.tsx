@@ -3,24 +3,33 @@ import { useEffect, useState } from "react";
 import styled from "styled-components"
 import Pagination from "../components/Pagination";
 import BoardTab from "../components/boardTab";
+import { parseISO, format } from 'date-fns';
 
-export interface User{
-    uid: number;
-    userName: string;
-    userPic: string;
-    userTh: number;
-    session: String;
+
+export function formatDateString(dateString: string): string {
+    try {
+      const date = parseISO(dateString);
+  
+      if (isNaN(date.getTime())) {
+        return "Invalid Date";
+      }
+  
+      return format(date, 'yyyy-MM-dd HH:mm');
+    } catch (error) {
+        return "Invalid Date";
+    }
 }
 
 export interface BoardPost{
-    bid: string;
-    boardTitle: string;
-    boardContents: string;
-    boardView: number;
+    boardId: string;
+    title: string;
+    content: string;
+    view: number;
     boardCategory:string;
-    userResponseDto: User;
-    createdDate: number;
-    thumbNaile: string;
+    writer: string;
+    createdAt: Date;
+    updatedAt: Date;
+    // thumbNaile: string;
 }
 
 const Wrapper = styled.div`
@@ -30,8 +39,6 @@ const Wrapper = styled.div`
 
     margin-left: 15vw;
     margin-right: 15vw;
-
-
 `;
 
 const TabContainer = styled.div`
@@ -123,7 +130,7 @@ export default function Board(){
     const[page, setPage] = useState<number>(1);
     const[boardItems, setBoardItems] = useState<BoardPost[]>([]);
     // const[pageSize, setPageSize] = useState();
-    // const[totalElements, setTotalElements] = useState();
+    const[totalElements, setTotalElements] = useState();
     const[totalPages, setTotalPages] = useState<number>(1);
     // const[isFirst, setIsFirst] = useState();
     // const[isLast, setIsLast] = useState();
@@ -131,27 +138,21 @@ export default function Board(){
     const[pageNumber, setPageNumber] = useState<number>(Number(page) || 1);
     // const[message, setMessage] = useState<string>("");
 
-
-
-    function formatDateString(dateString: string) {
-        const [datePart, timePart] = dateString.split('T'); // 'T'로 날짜와 시간 분리
-        const [hours, minutes] = timePart.split(':'); // 시간에서 시와 분 분리
-        return `${datePart} ${hours}:${minutes}`; // 'YYYY-MM-DD HH:MM' 형식으로 반환
-    }
-
     useEffect(() =>{
+        const token = localStorage.getItem('authorization');
         const fetchBoard = async() => {
             axios.get(
-                `${import.meta.env.VITE_API_URL}/board/list`,
-                {params:{
-                    "category": `${category}`,
-                    "page" : page - 1
-                }}
+                `${import.meta.env.VITE_API_URL}/boards/category/${category}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, 
+                    }
+                }
             ).then(res => {
-                setBoardItems(res.data.contents);
+                setBoardItems(res.data.data.content);
                 // setPageSize(res.data.pageSize);
-                // setTotalElements(res.data.totlaElements);
-                setTotalPages(res.data.totalPages);
+                setTotalElements(res.data.data.totlaElements);
+                setTotalPages(res.data.data.totalPages);
                 // setIsFirst(res.data.first);
                 // setIsLast(res.data.last);
                 // setIsEmpty(res.data.empty);
@@ -213,18 +214,18 @@ export default function Board(){
                             </BoardTr>
                         </BoardThead>
                         <BoardTbody>
-                            {boardItems.length === 0 ? (
+                            {totalElements === 0 ? (
                                 <BoardTr>
                                     <BoardTh colSpan={5}>빈 게시판</BoardTh>
                                 </BoardTr>
                             ) : (
                                 boardItems.map((item) => (
-                                    <BoardTr key={item.bid}>
-                                        <BoardTh>{item.bid}</BoardTh>
-                                        <BoardTh><BoardTitle href={`/board/detail/${item.bid}`}>{item.boardTitle}</BoardTitle></BoardTh>
-                                        <BoardTh>{`${item.userResponseDto.userTh}기 ${item.userResponseDto.userName}`}</BoardTh>
-                                        <BoardTh className="date">{formatDateString(item.createdDate.toString())}</BoardTh>
-                                        <BoardTh>{item.boardView}</BoardTh>
+                                    <BoardTr key={item.boardId}>
+                                        <BoardTh>{item.boardId}</BoardTh>
+                                        <BoardTh><BoardTitle href={`/board/detail/${item.boardId}`}>{item.title}</BoardTitle></BoardTh>
+                                        <BoardTh>{`${item.writer}`}</BoardTh>
+                                        <BoardTh className="date">{formatDateString(item.createdAt.toString())}</BoardTh>
+                                        <BoardTh>{item.view}</BoardTh>
                                     </BoardTr>
                                 ))
                             )}
