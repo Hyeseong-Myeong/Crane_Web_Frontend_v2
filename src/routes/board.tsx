@@ -3,6 +3,22 @@ import { useEffect, useState } from "react";
 import styled from "styled-components"
 import Pagination from "../components/Pagination";
 import BoardTab from "../components/boardTab";
+import { parseISO, format } from 'date-fns';
+
+
+export function formatDateString(dateString: string): string {
+    try {
+      const date = parseISO(dateString);
+  
+      if (isNaN(date.getTime())) {
+        return "Invalid Date";
+      }
+  
+      return format(date, 'yyyy-MM-dd HH:mm');
+    } catch (error) {
+        return "Invalid Date";
+    }
+}
 
 export interface BoardPost{
     boardId: string;
@@ -122,33 +138,18 @@ export default function Board(){
     const[pageNumber, setPageNumber] = useState<number>(Number(page) || 1);
     // const[message, setMessage] = useState<string>("");
 
-
-
-    function formatDateString(dateString: string): string {
-        const [datePart, timePartWithMs] = dateString.trim().split(' ');
-        if (!datePart || !timePartWithMs) {
-            return "Invalid Date";
-        }
-            return `${datePart} ${timePartWithMs.slice(0, 5)}`; // YYYY-MM-DD HH:MM
-    }
-
     useEffect(() =>{
         const token = localStorage.getItem('authorization');
         const fetchBoard = async() => {
             axios.get(
-                `${import.meta.env.VITE_API_URL}/boards`,
-                {params:{
-                    // "category": `${category}`,
-                    "page" : page - 1,
-                    "size" : 10
-                },
-                headers: {
-                    Authorization: `Bearer ${token}`, 
-                }
+                `${import.meta.env.VITE_API_URL}/boards/category/${category}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, 
+                    }
                 }
             ).then(res => {
                 setBoardItems(res.data.data.content);
-                console.log(boardItems);
                 // setPageSize(res.data.pageSize);
                 setTotalElements(res.data.data.totlaElements);
                 setTotalPages(res.data.data.totalPages);

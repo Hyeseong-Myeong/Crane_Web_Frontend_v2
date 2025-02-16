@@ -7,6 +7,7 @@ import { HomeENGTitle, HomeKRTitle } from "../components/page-components";
 import 'react-quill/dist/quill.snow.css';
 import DOMPurify from "dompurify";
 import QuillEditor from "../components/quillEditor";
+import { formatDateString } from "./board";
 
 const Wrapper = styled.div`
     display: flex;
@@ -99,6 +100,8 @@ const Button = styled.button`
 `
 
 export default function BoardDetail(){
+    const token = localStorage.getItem('authorization');
+
     const { boardId } = useParams();
     const [boardItems, setBoardItems] = useState<BoardPost>();
     const [formattedDate, setFormattedDate] = useState<string>("");
@@ -119,30 +122,21 @@ export default function BoardDetail(){
     useEffect(() => {
         const fetchBoard = async () => {
             const res = await axios.get(
-                `${import.meta.env.VITE_API_URL}/board/${boardId}`,
+                `${import.meta.env.VITE_API_URL}/boards/${boardId}`,
                 {
-                    withCredentials: true,
+                    headers: {
+                        Authorization: `Bearer ${token}`, 
+                    } 
                 }
-            );
-            setBoardItems(res.data);
-            setAuthorEmail(res.data.userResponseDto.userEmail);
-            setUpdatedTitle(res.data.boardTitle);
-
-            if (res.data.createdDate) {
-                const date = new Date(res.data.createdDate);
-                const year = date.getFullYear();
-                const month = date.getMonth() + 1;
-                const day = date.getDate();
-                const hours = date.getHours();
-                const minutes = date.getMinutes();
-
-                setFormattedDate(`${year}년${month}월${day}일 ${hours}:${minutes}`);
-            }
+            ).then(res => {
+                console.log(res)
+                setBoardItems(res.data.data);
+                setUpdatedTitle(res.data.data.boardTitle);
+                setFormattedDate(formatDateString(res.data.data.createdAt.toString()));
+            })
         };
 
         const getUser = async() => {
-            const token = localStorage.getItem('authorization');
-
             try{
                 axios.get(
                     `${import.meta.env.VITE_API_URL}/users/my`,
@@ -170,10 +164,9 @@ export default function BoardDetail(){
         getUser();
     }, []);
 
-
     useEffect(() => {
         if (boardItems && isEditing) {
-            setUpdatedContent(boardItems.boardContents || "");
+            setUpdatedContent(boardItems.content || "");
         }
     }, [isEditing, boardItems]);
 
@@ -225,14 +218,14 @@ export default function BoardDetail(){
                     onChange={(e) => setUpdatedTitle(e.target.value)} 
                 />
             ) : (
-                <DetailTitle>{boardItems?.boardTitle}</DetailTitle>
+                <DetailTitle>{boardItems?.title}</DetailTitle>
             )}
             <DetailAuthContainer>
-                {boardItems?.userResponseDto.userPic ? <DetailAuthorPic src={boardItems.userResponseDto.userPic} />
-                                        : <DetailAuthorPic src="public/cool_profile_pic.webp" />}
-                <DetailAuthor href={`/profile/${boardItems?.userResponseDto.uid}`}>작성자: {boardItems?.userResponseDto.userName} </DetailAuthor>
+                {/* {boardItems?.userResponseDto.userPic ? <DetailAuthorPic src={boardItems.userResponseDto.userPic} />
+                                        : <DetailAuthorPic src="public/cool_profile_pic.webp" />} */}
+                <DetailAuthor>작성자: {boardItems?.writer} </DetailAuthor>
                 <DetailAuthDate>작성일시: {formattedDate}</DetailAuthDate>
-                <DetailView>조회수: {boardItems?.boardView}</DetailView>
+                <DetailView>조회수: {boardItems?.view}</DetailView>
                 {userEmail === authorEmail && !isEditing &&
                     <Button onClick={() => setIsEditing(true)}>수정</Button>
                 }
@@ -242,9 +235,9 @@ export default function BoardDetail(){
             </DetailAuthContainer>
             <ContentsContainer className="ql-editor">
                 {isEditing ? (
-                    <QuillEditor setContent={setUpdatedContent} initialValue={boardItems?.boardContents}/> 
+                    <QuillEditor setContent={setUpdatedContent} initialValue={boardItems?.content}/> 
                 ) : (
-                    <div dangerouslySetInnerHTML={{ __html: sanitizer(`${boardItems?.boardContents}`) }} />
+                    <div dangerouslySetInnerHTML={{ __html: sanitizer(`${boardItems?.content}`) }} />
                 )}
             </ContentsContainer>
         </Wrapper>

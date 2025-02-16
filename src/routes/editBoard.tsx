@@ -44,7 +44,16 @@ const Select = styled.select`
 `
 
 const Publish = styled.button`
-    
+    font-size: 16px;
+    font-weight: 500;
+
+    color: white;
+    background-color: #0F62FE;
+    border: none;
+    padding: 10px 20px;
+
+
+    cursor: pointer;
 `
 
 
@@ -57,7 +66,7 @@ const Option = styled.option`
 export default function EditBoard(){
     const navigate = useNavigate();
     const [userRole, setUserRole] = useState("")
-    const [boardType, setBoardType] = useState("FREE");
+    const [boardType, setBoardType] = useState("");
     const [boardTitle, setBoardTitle] = useState("");
     const [attatchFile, setAttatchFile] = useState();
     const [editorContent, setEditorContent] = useState<string>("");
@@ -84,6 +93,12 @@ export default function EditBoard(){
             alert("내용을 입력해 주세요.");
             return;
         }
+        
+        if(!boardType){
+            alert("카테고리를 선택해주세요");
+            return;
+        }
+
         
         const payload = {
             title : boardTitle,
@@ -150,11 +165,11 @@ export default function EditBoard(){
             <EditorContainer>
                 <Select onChange={onSelectChange}>
                     <Option value={""}>카테고리 선택</Option>
-                    <Option value={"FREE"}>자유 게시판</Option>
+                    <Option value={"FEED"}>자유 게시판</Option>
                     { (userRole === "ADMIN" || userRole === "MANAGER") && ( 
                         <>
                             <Option value={"NOTICE"}>공지사항</Option> 
-                            <Option value={"INSTRUMENT"}>장비 게시판</Option> 
+                            <Option value={"EQUIPMENT"}>장비 게시판</Option> 
                             <Option value={"ADMIN"}>임원 게시판</Option> 
                             <Option value={"GALLERY"}>갤러리</Option>
                         </>

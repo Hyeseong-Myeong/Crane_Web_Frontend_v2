@@ -100,7 +100,7 @@ export function TruncatedText(fullText: string, maxLen: number){
       return fullText;
 }
 
-export default function GalleryItem({bid, thumbNaile, boardTitle, userResponseDto, createdDate, boardContents, }:BoardPost ){
+export default function GalleryItem({boardId, title, createdAt, content, writer, boardCategory, view, thumbNaile}:BoardPost ){
     const [userPic, setUserPic] = useState("cool_profile_pic.webp")
     const [formattedDate, setFormattedDate] = useState("");
 
@@ -112,39 +112,39 @@ export default function GalleryItem({bid, thumbNaile, boardTitle, userResponseDt
     };
 
     useEffect(() => {
-        const date = new Date(createdDate);
+        const date = new Date(createdAt);
         const year = date.getFullYear();
         const month = date.getMonth() + 1;
         const day = date.getDate();
         const hours = date.getHours();
         const minutes = date.getMinutes();
         
-        if(userResponseDto.userPic != null){
-            setUserPic(userResponseDto.userPic);
-        }
+        // if(userResponseDto.userPic != null){
+        //     setUserPic(userResponseDto.userPic);
+        // }
         setFormattedDate(`${year}년 ${month}월 ${day}일 ${hours}:${minutes}`);
-    }, [createdDate]);
+    }, [createdAt]);
 
 
     return(
         <Wrapper>
-            <Link to={`/gallery/detail/${bid}`}  style={{ textDecoration: 'none' }}>
+            <Link to={`/gallery/detail/${boardId}`}  style={{ textDecoration: 'none' }}>
                 <GalleryContainer>
                     { thumbNaile ? <GalleryImg src={thumbNaile} /> : <GalleryImg src="home_main.jpg" /> }
 
                     <GalleryTitleContainer>
                         {/* <Id>{bid}</Id> */}
-                        <Title>{boardTitle}</Title>
-                        <Description>{TruncatedText(sanitizer(boardContents), 40)}</Description>
+                        <Title>{title}</Title>
+                        <Description>{TruncatedText(sanitizer(content), 40)}</Description>
                         <AuthorContainer>
                             <AuthorPic src={userPic} />
                             <div>
                                 {/* <Link to={`profile/${userResponseDto.uid}`} style={{ textDecoration: 'none' }}>  */}
                                     <AuthorName>
-                                        {userResponseDto.userName} 
+                                        {writer} 
                                     </AuthorName>
                                 {/* </Link> */}
-                                <AuthorDesc>{userResponseDto.userTh}기 {userResponseDto.session} </AuthorDesc>
+                                <AuthorDesc>기 </AuthorDesc>
                             </div>
                         </AuthorContainer>
                         <CreatedAt>{formattedDate}</CreatedAt>

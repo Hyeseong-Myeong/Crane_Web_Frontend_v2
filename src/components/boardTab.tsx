@@ -51,20 +51,20 @@ export default function BoardTab({category, setCategory}: BoardTabProps){
                 공지게시판
             </Selector>
             <Selector
-                onClick={() => handleSelectCategory('FREE')}
+                onClick={() => handleSelectCategory('FEED')}
                 style={{
-                    fontWeight: category === 'FREE' ? 'bold' : 'normal',
-                    borderBottom: category === 'FREE' ? '2px solid #001D6C' : ''
+                    fontWeight: category === 'FEED' ? 'bold' : 'normal',
+                    borderBottom: category === 'FEED' ? '2px solid #001D6C' : ''
                     }}
             >
                 {/* <Link to='/board?category=FREE&page=1' style={{textDecoration:'None', color:'black'}}></Link> */}
                 자유게시판  
             </Selector>
             <Selector
-                onClick={() => handleSelectCategory('INSTRUMENT')}
+                onClick={() => handleSelectCategory('EQUIPMENT')}
                 style={{
-                    fontWeight: category === 'INSTRUMENT' ? 'bold' : 'normal',
-                    borderBottom: category === 'INSTRUMENT' ? '2px solid #001D6C' : ''
+                    fontWeight: category === 'EQUIPMENT' ? 'bold' : 'normal',
+                    borderBottom: category === 'EQUIPMENT' ? '2px solid #001D6C' : ''
                     }}
             >                
                 {/* <Link to='/board?category=INSTRUMENT&page=1' style={{textDecoration:'None', color:'black'}}></Link>  */}

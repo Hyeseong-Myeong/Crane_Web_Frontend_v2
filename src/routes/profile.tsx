@@ -55,6 +55,9 @@ const ContainerTitle = styled.p`
 
 
 export default function Profile(){
+
+    
+
     return (
         <Wrapper>
             <SideBar>
@@ -70,7 +73,7 @@ export default function Profile(){
                     My Page
                 </Title>
                 <Container>
-                    <ContainerTitle>Profile Photo</ContainerTitle>
+                    <ContainerTitle>Profile Photo: TBC</ContainerTitle>
 
                 </Container>
                 <Container>

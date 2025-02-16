@@ -233,7 +233,7 @@ export default function ReservationMy() {
                 <h2>지난 예약</h2>
                 {pastReservations.length > 0 ? (
                     pastReservations.map((reservation) => {
-                        const instrument = instList.find(inst => inst.instrumentId === reservation.instrument.instrumentId);
+                        const instrument = reservation.instrument;
                         return (
                             <ResBlock key={reservation.reservationId}>
                                 <UpperResBox>
