@@ -100,7 +100,7 @@ export function TruncatedText(fullText: string, maxLen: number){
       return fullText;
 }
 
-export default function GalleryItem({boardId, title, createdAt, content, writer, boardCategory, view, thumbNaile}:BoardPost ){
+export default function GalleryItem({boardId, title, createdAt, content, writer, thumbNaile}:BoardPost ){
     const [userPic, setUserPic] = useState("cool_profile_pic.webp")
     const [formattedDate, setFormattedDate] = useState("");
 
@@ -122,6 +122,7 @@ export default function GalleryItem({boardId, title, createdAt, content, writer,
         // if(userResponseDto.userPic != null){
         //     setUserPic(userResponseDto.userPic);
         // }
+        setUserPic("cool_profile_pic.webp");
         setFormattedDate(`${year}년 ${month}월 ${day}일 ${hours}:${minutes}`);
     }, [createdAt]);
 

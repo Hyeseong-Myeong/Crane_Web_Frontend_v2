@@ -1,5 +1,4 @@
 import axios from "axios";
-import { error } from "console";
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, MessagePayload, onMessage } from "firebase/messaging";
 // import {isMobile,isTablet, isDesktop} from 'react-device-detect';
