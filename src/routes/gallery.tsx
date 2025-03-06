@@ -64,12 +64,12 @@ export default function Gallery(){
     const [loading, setLoading] = useState(true); // 로딩 상태 추가
     const[page, setPage] = useState<number>(1);
     const[galleryItems, setGalleryItems] = useState<BoardPost[]>([]);
-    const[pageSize, setPageSize] = useState();
-    const[totalElements, setTotalElements] = useState();
+    // const[pageSize, setPageSize] = useState();
+    // const[totalElements, setTotalElements] = useState();
     const[totalPages, setTotalPages] = useState<number>(1);
-    const[isFirst, setIsFirst] = useState();
-    const[isLast, setIsLast] = useState();
-    const[isEmpty, setIsEmpty] = useState();
+    // const[isFirst, setIsFirst] = useState();
+    // const[isLast, setIsLast] = useState();
+    // const[isEmpty, setIsEmpty] = useState();
     const[pageNumber, setPageNumber] = useState<number>(Number(page) || 1);
     const [userRole, setUserRole] = useState("")
 
@@ -96,12 +96,12 @@ export default function Gallery(){
                 },
             ).then(res => {
                 setGalleryItems(res.data.data.content);
-                setPageSize(res.data.data.size);
-                setTotalElements(res.data.data.totalElements);
+                // setPageSize(res.data.data.size);
+                // setTotalElements(res.data.data.totalElements);
                 setTotalPages(res.data.data.totalPages);
-                setIsFirst(res.data.data.first);
-                setIsLast(res.data.data.last);
-                setIsEmpty(res.data.data.empty);
+                // setIsFirst(res.data.data.first);
+                // setIsLast(res.data.data.last);
+                // setIsEmpty(res.data.data.empty);
                 setLoading(false); // 데이터 로딩 완료 후 loading 상태 변경
             }).catch(error => {
                 console.error("Error fetching gallery data: ", error);

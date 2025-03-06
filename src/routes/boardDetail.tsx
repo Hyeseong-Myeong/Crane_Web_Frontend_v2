@@ -54,11 +54,11 @@ const DetailAuthContainer = styled.div`
     border-bottom: 2px solid #888888;
 `
 
-const DetailAuthorPic = styled.img`
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-`
+// const DetailAuthorPic = styled.img`
+//     width: 36px;
+//     height: 36px;
+//     border-radius: 50%;
+// `
 
 const DetailAuthor = styled.a`
     padding: 20px;
@@ -121,7 +121,7 @@ export default function BoardDetail(){
 
     useEffect(() => {
         const fetchBoard = async () => {
-            const res = await axios.get(
+            await axios.get(
                 `${import.meta.env.VITE_API_URL}/boards/${boardId}`,
                 {
                     headers: {
@@ -133,6 +133,7 @@ export default function BoardDetail(){
                 setBoardItems(res.data.data);
                 setUpdatedTitle(res.data.data.boardTitle);
                 setFormattedDate(formatDateString(res.data.data.createdAt.toString()));
+                setAuthorEmail("")
             })
         };
 

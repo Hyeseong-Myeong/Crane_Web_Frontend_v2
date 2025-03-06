@@ -70,8 +70,8 @@ export default function ReservationMy() {
 
 
     // const [resList, setResList] = useState<resItem[]>([]);
-    const [instList, setInstList] = useState<instItem[]>([]);
-    const [uid, setUid] = useState<number | null>(null);
+    // const [instList, setInstList] = useState<instItem[]>([]);
+    // const [uid, setUid] = useState<number | null>(null);
 
     // 예약 상태별 배열
     const [upcomingReservations, setUpcomingReservations] = useState<resItem[]>([]);
@@ -80,7 +80,7 @@ export default function ReservationMy() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await axios.get(
+                await axios.get(
                     `${import.meta.env.VITE_API_URL}/users/my`,
                     { 
                         headers: {
@@ -88,7 +88,7 @@ export default function ReservationMy() {
                         }  
                     }
                 );
-                setUid(res.data.data.uid);
+                // setUid(res.data.data.uid);
             } catch (err) {
                 console.log(err);
             }
@@ -96,7 +96,7 @@ export default function ReservationMy() {
 
         const fetchInst = async () => {
             try {
-                const res = await axios.get(
+                await axios.get(
                     `${import.meta.env.VITE_API_URL}/instruments`,
                     {
                         headers: {
@@ -104,7 +104,7 @@ export default function ReservationMy() {
                         }
                     }
                 );
-                setInstList(res.data);
+                // setInstList(res.data);
             } catch (err) {
                 console.log(err);
             }

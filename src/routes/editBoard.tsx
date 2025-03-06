@@ -68,7 +68,7 @@ export default function EditBoard(){
     const [userRole, setUserRole] = useState("")
     const [boardType, setBoardType] = useState("");
     const [boardTitle, setBoardTitle] = useState("");
-    const [attatchFile, setAttatchFile] = useState();
+    // const [attatchFile, setAttatchFile] = useState();
     const [editorContent, setEditorContent] = useState<string>("");
 
     const onSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -104,7 +104,7 @@ export default function EditBoard(){
             title : boardTitle,
             content : editorContent,
             boardCategory : boardType,
-            attatchFile : attatchFile
+            // attatchFile : attatchFile
         }
 
         try{
