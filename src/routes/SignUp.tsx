@@ -106,7 +106,7 @@ export default function SignUp(){
     return(
         <Wrapper>
             <ImageContainer >
-                <Image src="public/login-img.jpg" />
+                <Image src="/login-img.jpg" />
             </ImageContainer>
             <LoginFormContainer>
                 <Title>Sign Up</Title>

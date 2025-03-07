@@ -23,7 +23,8 @@ export const Image = styled.img`
 
 export const LoginFormContainer = styled.div`
     width: 50vw;
-    
+    height: 100%;
+
     display:flex;
     flex-direction: column;
     
@@ -45,7 +46,7 @@ export const Title = styled.h1`
 
 export const InputTitle = styled.span`
     padding:16px;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 600;
 `;
 
@@ -59,7 +60,7 @@ export const Form = styled.form`
 export const Input = styled.input`
     padding: 10px 20px;
     width: 70%;
-    font-size: 16px;
+    font-size: 14px;
     background-color: #F2F4F8;
     
     border-width:0 0 1px;
@@ -67,7 +68,7 @@ export const Input = styled.input`
 
     &[type="submit"] {
         cursor:pointer;
-        margin-top: 10px;
+        margin-top: 8px;
         
         &:hover{
             background-color: #0F62FE;
