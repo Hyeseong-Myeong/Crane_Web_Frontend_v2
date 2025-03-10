@@ -129,7 +129,6 @@ export default function BoardDetail(){
                     } 
                 }
             ).then(res => {
-                console.log(res)
                 setBoardItems(res.data.data);
                 setUpdatedTitle(res.data.data.boardTitle);
                 setFormattedDate(formatDateString(res.data.data.createdAt.toString()));

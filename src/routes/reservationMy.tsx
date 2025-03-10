@@ -130,7 +130,6 @@ export default function ReservationMy() {
                 }
             );
             // setResList(res.data);
-            console.log(res.data.data)
             const now = new Date();
             const upcoming = res.data.data
                 .filter((reservation: resItem) => new Date(reservation.time) >= now)

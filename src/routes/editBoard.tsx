@@ -70,6 +70,7 @@ export default function EditBoard(){
     const [boardTitle, setBoardTitle] = useState("");
     // const [attatchFile, setAttatchFile] = useState();
     const [editorContent, setEditorContent] = useState<string>("");
+    const [isLoading, setIsLoading]  = useState(false);
 
     const onSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         e.preventDefault();
@@ -82,7 +83,9 @@ export default function EditBoard(){
     }
 
     const handlePublish = () => {
-
+        if(isLoading){
+            return
+        }
         // 제목, 내용의 공백 체크
         if (!boardTitle.trim()) {
             alert("제목을 입력해 주세요.");
@@ -98,7 +101,7 @@ export default function EditBoard(){
             alert("카테고리를 선택해주세요");
             return;
         }
-
+        setIsLoading(true);
         
         const payload = {
             title : boardTitle,
@@ -178,7 +181,7 @@ export default function EditBoard(){
                 </Select>
                 <QuillEditor setContent = {setEditorContent}/>
             </EditorContainer>
-            <Publish onClick={handlePublish}>등록</Publish>
+            <Publish onClick={handlePublish}>{isLoading ? "Loading...": "Submit"}</Publish>
         </Wrapper>
     )
 }
