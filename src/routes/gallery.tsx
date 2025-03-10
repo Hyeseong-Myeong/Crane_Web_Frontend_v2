@@ -67,8 +67,8 @@ export default function Gallery(){
     // const[pageSize, setPageSize] = useState();
     // const[totalElements, setTotalElements] = useState();
     const[totalPages, setTotalPages] = useState<number>(1);
-    // const[isFirst, setIsFirst] = useState();
-    // const[isLast, setIsLast] = useState();
+    const[isFirst, setIsFirst] = useState<boolean>(true);
+    const[isLast, setIsLast] = useState<boolean>(true);
     // const[isEmpty, setIsEmpty] = useState();
     const[pageNumber, setPageNumber] = useState<number>(Number(page) || 1);
     const [userRole, setUserRole] = useState("")
@@ -99,8 +99,8 @@ export default function Gallery(){
                 // setPageSize(res.data.data.size);
                 // setTotalElements(res.data.data.totalElements);
                 setTotalPages(res.data.data.totalPages);
-                // setIsFirst(res.data.data.first);
-                // setIsLast(res.data.data.last);
+                setIsFirst(res.data.data.first);
+                setIsLast(res.data.data.last);
                 // setIsEmpty(res.data.data.empty);
                 setLoading(false); // 데이터 로딩 완료 후 loading 상태 변경
             }).catch(error => {
@@ -171,6 +171,8 @@ export default function Gallery(){
                     page={pageNumber}
                     setPage = {setPageNumber}
                     totalPages={totalPages}
+                    isFirst = {isFirst}
+                    isLast = {isLast}
                     link = {`gallery`}
                 />
             </PageContainer>
