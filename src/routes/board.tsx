@@ -129,20 +129,20 @@ export default function Board(){
     
     const[page, setPage] = useState<number>(1);
     const[boardItems, setBoardItems] = useState<BoardPost[]>([]);
-    // const[pageSize, setPageSize] = useState();
-    const[totalElements, setTotalElements] = useState();
+    // const[totalElements, setTotalElements] = useState();
     const[totalPages, setTotalPages] = useState<number>(1);
-    // const[isFirst, setIsFirst] = useState();
-    // const[isLast, setIsLast] = useState();
-    // const[isEmpty, setIsEmpty] = useState();
+    const[isFirst, setIsFirst] = useState<boolean>(true);
+    const[isLast, setIsLast] = useState<boolean>(true);
+    const[isEmpty, setIsEmpty] = useState();
     const[pageNumber, setPageNumber] = useState<number>(Number(page) || 1);
     // const[message, setMessage] = useState<string>("");
+    const pagesize = 20;
 
     useEffect(() =>{
         const token = localStorage.getItem('authorization');
         const fetchBoard = async() => {
             axios.get(
-                `${import.meta.env.VITE_API_URL}/boards/category/${category}`,
+                `${import.meta.env.VITE_API_URL}/boards/category/${category}?page=${page-1}&size=${pagesize}&sort=createdAt,desc`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`, 
@@ -151,11 +151,11 @@ export default function Board(){
             ).then(res => {
                 setBoardItems(res.data.data.content);
                 // setPageSize(res.data.pageSize);
-                setTotalElements(res.data.data.totlaElements);
+                // setTotalElements(res.data.data.totlaElements);
                 setTotalPages(res.data.data.totalPages);
-                // setIsFirst(res.data.first);
-                // setIsLast(res.data.last);
-                // setIsEmpty(res.data.empty);
+                setIsFirst(res.data.data.first);
+                setIsLast(res.data.data.last);
+                setIsEmpty(res.data.data.empty);
                 // setMessage(res.data.message);
             })
         }
@@ -214,7 +214,7 @@ export default function Board(){
                             </BoardTr>
                         </BoardThead>
                         <BoardTbody>
-                            {totalElements === 0 ? (
+                            {isEmpty ? (
                                 <BoardTr>
                                     <BoardTh colSpan={5}>빈 게시판</BoardTh>
                                 </BoardTr>
@@ -241,6 +241,8 @@ export default function Board(){
                     page={pageNumber}
                     setPage = {setPageNumber}
                     totalPages={totalPages}
+                    isFirst = {isFirst}
+                    isLast = {isLast}
                     link = {`gallery`}
                 />
             </PageContainer>

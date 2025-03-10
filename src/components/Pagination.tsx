@@ -6,6 +6,8 @@ interface pagenationProps{
     page: number;
     setPage: (page:number) => void;
     totalPages: number;
+    isFirst: boolean;
+    isLast: boolean;
     link: string;
 }
 
@@ -31,8 +33,14 @@ const Button = styled.button`
     }
 
     &[disabled] {
-        cursor: revert;
+        cursor: not-allowed;
         transform: revert;
+
+        &:hover {
+            background: #e0e0e0; // disabled 상태일 때 hover 배경색 제거
+            cursor: not-allowed; // disabled 상태일 때 hover 커서 제거
+            transform: revert; // disabled 상태일 때 hover 변형 제거
+        }
     }
 
     &[aria-current] {
@@ -43,7 +51,7 @@ const Button = styled.button`
   }
 `
 
-export default function Pagination({page, setPage, totalPages} : pagenationProps){
+export default function Pagination({page, setPage, totalPages, isFirst, isLast} : pagenationProps){
     
     const navigate = useNavigate();
     const location = useLocation();
@@ -62,10 +70,11 @@ export default function Pagination({page, setPage, totalPages} : pagenationProps
         <Wrapper>
             <Button onClick={() => {
                     // setPage(page - 1)
-                    // goToPage(page - 1)
-                    navigate(`?page=${page - 1}`)
+                    if(!isFirst){
+                        navigate(`?page=${page - 1}`)
+                    }
                 }}
-                disabled = {page === 1}>
+                disabled = {isFirst}>
                 &lt; 이전
             </Button>
             {Array.from({ length: totalPages }).map(( _, i ) => (
@@ -74,7 +83,6 @@ export default function Pagination({page, setPage, totalPages} : pagenationProps
                     // onClick={() => setPage(i + 1)}
                     onClick={() => {
                         // setPage(i + 1)
-                        // goToPage(i + 1)
                         navigate(`?page=${i + 1}`)
                     }}
                     aria-current={page === i + 1 ? "page" : undefined}
@@ -85,10 +93,9 @@ export default function Pagination({page, setPage, totalPages} : pagenationProps
             }
             <Button onClick={() => {
                     // setPage(page + 1)
-                    // goToPage(page + 1)
                     navigate(`?page=${page + 1}`)
                 }}
-                disabled = {page === totalPages}>
+                disabled={isLast}>
                 다음 &gt;
             </Button>
         </Wrapper>
