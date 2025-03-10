@@ -140,7 +140,7 @@ function App() {
 
     messageListener = onMessageListener().then(payload => {
       // setNotification(payload);
-      console.log("새로운 알림: ", payload);
+      // console.log("새로운 알림: ", payload);
       if(payload.notification) {
         new Notification(payload.notification.title || "새 알림", {
           body: payload.notification.body || "알림 내용이 없습니다."

@@ -123,7 +123,6 @@ export default function Gallery(){
                 },
             )
             .then(res => {
-                console.log(res)
                 if(res.status === 200){
                     setUserRole(res.data.data.userRole)
 

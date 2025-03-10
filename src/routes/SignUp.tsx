@@ -61,7 +61,6 @@ export default function SignUp(){
             session === ""||
             th == null
         ){
-                console.log(name, email, password, studentId, dept, phoneNumber, birthday, session)
             return;
         }
         //create payload
@@ -78,7 +77,6 @@ export default function SignUp(){
         }
         
         setIsLoading(true);
-        console.log("실행");
         //계정 생성
         try{
             axios.post(

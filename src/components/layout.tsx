@@ -206,7 +206,7 @@ export default function Layout(){
                         </Text>
                     </LinkBox>
                     <LinkBox href="https://www.youtube.com/@crane_sch">
-                        <LinkLogoImg src="YouTube_light_icon_(2017).svg.png" />
+                        <LinkLogoImg src="YouTube_light_icon_(2017).png" />
                         <Text>
                             유튜브 바로가기
                         </Text>
