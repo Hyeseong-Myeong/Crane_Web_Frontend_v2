@@ -5,9 +5,9 @@ import styled from "styled-components";
 import { BoardPost } from "./gallery";
 import { HomeENGTitle, HomeKRTitle } from "../components/page-components";
 import 'react-quill/dist/quill.snow.css';
-import DOMPurify from "dompurify";
 import QuillEditor from "../components/quillEditor";
 import { formatDateString } from "./board";
+import sanitizer from "../components/sanitizer"
 
 const Wrapper = styled.div`
     display: flex;
@@ -111,14 +111,6 @@ export default function BoardDetail(){
     const [updatedContent, setUpdatedContent] = useState<string>("");
     const [updatedTitle, setUpdatedTitle] = useState<string>("");
 
-    const sanitizer = (content: string) => {
-        return DOMPurify.sanitize(content, {
-            ALLOWED_TAGS: ['span', 'p', 'strong', 'em', 'ul', 'ol', 'li','u', 's'],  // 허용할 태그 목록
-            ALLOWED_ATTR: ['class'],  // class 속성을 허용
-        });
-    };
-
-
     useEffect(() => {
         const fetchBoard = async () => {
             await axios.get(
@@ -129,6 +121,7 @@ export default function BoardDetail(){
                     } 
                 }
             ).then(res => {
+                // console.log(res.data)
                 setBoardItems(res.data.data);
                 setUpdatedTitle(res.data.data.boardTitle);
                 setFormattedDate(formatDateString(res.data.data.createdAt.toString()));
